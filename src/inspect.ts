@@ -1,8 +1,8 @@
-import {GetServerSideProps, GetServerSidePropsContext} from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import getConfig from 'next/config'
-import {Fort} from "./with-fortress";
-import {reverseProxy} from "./reverse-proxy";
-import {ParsedUrlQuery} from "querystring";
+import { Fort } from './with-fortress'
+import { reverseProxy } from './reverse-proxy'
+import { ParsedUrlQuery } from 'querystring'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as pathToRegexp from 'next/dist/compiled/path-to-regexp'
@@ -54,10 +54,10 @@ export const runReverseProxy = async (
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const config: Fort = getConfig().serverRuntimeConfig.forts[<string>ctx.query.__key]
+  const config: Fort =
+    getConfig().serverRuntimeConfig.forts[<string>ctx.query.__key]
 
-  if (config.mode === 'rewrite')
-    await runReverseProxy(ctx, config)
+  if (config.mode === 'rewrite') await runReverseProxy(ctx, config)
 
   if (config.mode === 'redirect')
     return {

@@ -1,5 +1,5 @@
 import { NextConfig } from 'next/dist/next-server/server/config-shared'
-import {prepareFortressInspect} from "./prepare-fortress-inspect";
+import { prepareFortressInspect } from './prepare-fortress-inspect'
 
 type InspectByIp = {
   inspectBy: 'ip'

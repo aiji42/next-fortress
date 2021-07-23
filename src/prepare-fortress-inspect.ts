@@ -6,9 +6,7 @@ const Inspect = () => null
 export default Inspect
 `
 
-export const prepareFortressInspect = (
-  prepared?: boolean
-): void => {
+export const prepareFortressInspect = (prepared?: boolean): void => {
   if (prepared) return
   let dir = ''
   try {
