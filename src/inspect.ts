@@ -57,6 +57,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const config: Fort =
     getConfig().serverRuntimeConfig.forts[<string>ctx.query.__key]
 
+  console.log(config)
+
   if (config.mode === 'rewrite') await runReverseProxy(ctx, config)
 
   if (config.mode === 'redirect')

@@ -1,6 +1,14 @@
-import { Rewrite, RouteHas } from 'next/dist/lib/load-custom-routes'
+import { RouteHas, Rewrite } from 'next/dist/lib/load-custom-routes'
 import { mergeRewrites } from './merge-rewrites'
-import { Rewrites, SplitOptions } from './types'
+import { Fort } from './with-fortress'
+
+export type Rewrites =
+  | {
+      beforeFiles?: Rewrite[]
+      afterFiles?: Rewrite[]
+      fallback?: Rewrite[]
+    }
+  | Rewrite[]
 
 const rule = (
   source: string,
@@ -13,21 +21,16 @@ const rule = (
 })
 
 export const makeRewrites =
-  (
-    options: SplitOptions,
-    originalRewrite: (() => Promise<Rewrites>) | undefined,
-    isMain: boolean
-  ) =>
+  (options: Fort[], originalRewrite: (() => Promise<Rewrites>) | undefined) =>
   async (): Promise<Rewrites> => {
     const rewrite = await originalRewrite?.()
-    if (!isMain) return mergeRewrites(rewrite, [])
 
     return mergeRewrites(
       rewrite,
-      Object.entries(options).map(([key, option]) =>
+      options.map((fort, index) =>
         // Access from the browser will be directed to the RP,
         // but access from the RP will be directed to the normal path.
-        rule(option.path, `/_split-challenge/${key}`, [
+        rule(fort.source, `/_fortress/${index}`, [
           { type: 'header', key: 'user-agent' }
         ])
       )

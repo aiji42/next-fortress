@@ -1,5 +1,5 @@
 import { Rewrite } from 'next/dist/lib/load-custom-routes'
-import { Rewrites } from './types'
+import { Rewrites } from './make-rewrites'
 
 export const mergeRewrites = (
   originalRules: Rewrites | undefined,

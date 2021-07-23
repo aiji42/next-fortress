@@ -1,5 +1,6 @@
 import { NextConfig } from 'next/dist/next-server/server/config-shared'
 import { prepareFortressInspect } from './prepare-fortress-inspect'
+import { makeRewrites } from './make-rewrites'
 
 type InspectByIp = {
   inspectBy: 'ip'
@@ -40,12 +41,11 @@ export type Fort = {
 export const withFortress =
   (forts: Fort[]) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
-    console.log(forts)
-
     prepareFortressInspect()
 
     return {
       ...config,
+      rewrites: <NextConfig['rewrites']>makeRewrites(forts, config.rewrites),
       serverRuntimeConfig: {
         ...config.serverRuntimeConfig,
         forts
