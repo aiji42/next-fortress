@@ -1,4 +1,5 @@
 import { NextConfig } from 'next/dist/next-server/server/config-shared'
+import {prepareFortressInspect} from "./prepare-fortress-inspect";
 
 type InspectByIp = {
   inspectBy: 'ip'
@@ -22,7 +23,7 @@ type Block = {
 
 type Redirect = {
   mode: 'redirect'
-  statusCode?: number
+  statusCode?: 301 | 302 | 303 | 307 | 308
   destination: string
 }
 
@@ -31,7 +32,7 @@ type Rewrite = {
   destination: string
 }
 
-type Fort = {
+export type Fort = {
   source: string
 } & (Block | Redirect | Rewrite) &
   (InspectByIp | InspectByCookie | InspectByHeader)
@@ -40,7 +41,14 @@ export const withFortress =
   (forts: Fort[]) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
     console.log(forts)
+
+    prepareFortressInspect()
+
     return {
-      ...config
+      ...config,
+      serverRuntimeConfig: {
+        ...config.serverRuntimeConfig,
+        forts
+      }
     }
   }
