@@ -3,6 +3,10 @@
   "version": "0.0.0-development",
   "description": "This is a Next.js plugin that blocks, redirects, or displays a dummy page for accesses that are not authenticated.",
   "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build"
+  ],
   "repository": "git@github.com:aiji42/next-fortress.git",
   "author": "aiji42 <aiji42@gmail.com> (https://twitter.com/aiji42_dev)",
   "license": "MIT",
