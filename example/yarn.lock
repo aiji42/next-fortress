@@ -1963,12 +1963,9 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-next-fortress@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-1.0.0.tgz#30455c81df67ef3b61166796610ee48d5635d01b"
-  integrity sha512-FZeoSfzmy3pOVFS6Kg5bDpIWmBbCWDp2YHSQXt6yHc190iwcWxSuseP62FXRPsJJdDiuItiLwggCo+s0Q4gU2Q==
-  dependencies:
-    ip-cidr "^3.0.3"
+"next-fortress@link:..":
+  version "0.0.0"
+  uid ""
 
 next@11.0.1:
   version "11.0.1"
