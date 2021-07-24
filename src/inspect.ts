@@ -22,19 +22,25 @@ export const inspectIp = (
 export const runReverseProxy = async ({
   req,
   res
-}: GetServerSidePropsContext): Promise<void> => {
+}: GetServerSidePropsContext, host: string): Promise<void> => {
   const headers = { ...req.headers }
   delete headers['user-agent']
+  let url: null | URL = null
+  try {
+    url = new URL(host)
+  } catch (_e) {
+    // no operation
+  }
   await reverseProxy(
     { req, res },
     {
-      host: req.socket.localAddress,
-      port: req.socket.localPort,
+      host: url?.hostname ?? host,
       method: req.method,
       path: req.url,
+      port: url?.port,
       headers
     },
-    false
+    url === null || url.protocol === 'https:'
   )
 }
 
@@ -43,12 +49,9 @@ const emptyProps = {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  console.log(ctx.query)
-  console.log(ctx.req.url)
   const config: Fort =
     getConfig().serverRuntimeConfig.forts[<string>ctx.query.__key]
-
-  console.log(config)
+  const host: string = getConfig().serverRuntimeConfig.fortHost
 
   let allow = false
   if (config.inspectBy === 'ip' && ctx.req.headers['x-forwarded-for']) {
@@ -70,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       return emptyProps
     }
   } else {
-    await runReverseProxy(ctx)
+    await runReverseProxy(ctx, host)
   }
 
   return emptyProps

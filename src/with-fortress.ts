@@ -39,7 +39,7 @@ export type Fort = {
   (InspectByIp | InspectByCookie | InspectByHeader)
 
 export const withFortress =
-  (forts: Fort[]) =>
+  ({ forts, host }: { forts: Fort[], host: string }) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
     prepareFortressInspect()
 
@@ -48,7 +48,8 @@ export const withFortress =
       rewrites: <NextConfig['rewrites']>makeRewrites(forts, config.rewrites),
       serverRuntimeConfig: {
         ...config.serverRuntimeConfig,
-        forts
+        forts,
+        fortHost: host
       }
     }
   }
