@@ -39,5 +39,8 @@
     "ts-add-module-exports": "^1.0.0",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "ip-cidr": "^3.0.3"
   }
 }
