@@ -1,4 +1,4 @@
-const withFortress = require('./next-fortress')({
+const withFortress = require('next-fortress')({
   forts: [
     {
       source: '/foo/redirect',
