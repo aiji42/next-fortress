@@ -1,11 +1,12 @@
-import {GetServerSideProps, GetServerSidePropsContext} from 'next'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import getConfig from 'next/config'
-import {Fort} from './with-fortress'
+import { Fort } from './with-fortress'
 import { reverseProxy } from './reverse-proxy'
 
-export const runReverseProxy = async (
-  { req, res }: GetServerSidePropsContext
-): Promise<void> => {
+export const runReverseProxy = async ({
+  req,
+  res
+}: GetServerSidePropsContext): Promise<void> => {
   const headers = { ...req.headers }
   delete headers['user-agent']
   await reverseProxy(

@@ -1,9 +1,9 @@
 const withFortress = require('next-fortress')([
   {
-    source: '/:path*',
-    destination: 'https://google.com',
+    source: '/:foo*/rewrite',
     inspect: 'ip',
-    mode: 'redirect',
+    mode: 'block',
+    statusCode: 401,
     ips: []
   }
 ])
