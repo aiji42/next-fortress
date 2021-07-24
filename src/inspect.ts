@@ -43,6 +43,8 @@ const emptyProps = {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  console.log(ctx.query)
+  console.log(ctx.req.url)
   const config: Fort =
     getConfig().serverRuntimeConfig.forts[<string>ctx.query.__key]
 
