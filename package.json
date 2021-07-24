@@ -10,6 +10,18 @@
   "repository": "git@github.com:aiji42/next-fortress.git",
   "author": "aiji42 <aiji42@gmail.com> (https://twitter.com/aiji42_dev)",
   "license": "MIT",
+  "keywords": [
+    "next.js",
+    "next",
+    "react",
+    "plugins",
+    "access controll",
+    "content block"
+  ],
+  "bugs": {
+    "url": "https://github.com/aiji42/next-fortress/issues"
+  },
+  "homepage": "https://github.com/aiji42/next-fortress#readme",
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./src/*.ts",
     "format": "yarn prettier src/*.ts src/**/*.ts --write",
