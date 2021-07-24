@@ -1,8 +1,16 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../../styles/Home.module.css'
+import {GetServerSideProps} from "next";
+import {VFC} from "react";
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return {
+    props: { query: ctx.query }
+  }
+}
+
+const Page: VFC = (props) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -13,7 +21,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Rewrite!!
+          {JSON.stringify(props)}
         </h1>
 
         <p className={styles.description}>
@@ -67,3 +75,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default Page
