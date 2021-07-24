@@ -39,7 +39,7 @@ export type Fort = {
   (InspectByIp | InspectByCookie | InspectByHeader)
 
 export const withFortress =
-  ({ forts, host }: { forts: Fort[], host: string }) =>
+  ({ forts, host }: { forts: Fort[]; host: string }) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
     prepareFortressInspect()
 

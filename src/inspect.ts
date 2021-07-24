@@ -19,10 +19,10 @@ export const inspectIp = (
   })
 }
 
-export const runReverseProxy = async ({
-  req,
-  res
-}: GetServerSidePropsContext, host: string): Promise<void> => {
+export const runReverseProxy = async (
+  { req, res }: GetServerSidePropsContext,
+  host: string
+): Promise<void> => {
   const headers = { ...req.headers }
   delete headers['user-agent']
   let url: null | URL = null
