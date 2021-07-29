@@ -1,6 +1,6 @@
 import { RouteHas, Rewrite } from 'next/dist/lib/load-custom-routes'
 import { mergeRewrites } from './merge-rewrites'
-import { Fort } from './with-fortress'
+import { Fort } from './types'
 
 export type Rewrites =
   | {
