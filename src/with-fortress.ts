@@ -1,45 +1,10 @@
 import { NextConfig } from 'next/dist/next-server/server/config-shared'
 import { prepareFortressInspect } from './prepare-fortress-inspect'
 import { makeRewrites } from './make-rewrites'
-
-type InspectByIp = {
-  inspectBy: 'ip'
-  ips: string | Array<string>
-}
-
-// WIP
-type InspectByCookie = {
-  inspectBy: 'cookie'
-}
-
-// WIP
-type InspectByHeader = {
-  inspectBy: 'header'
-}
-
-type Block = {
-  mode: 'block'
-  statusCode?: number
-}
-
-type Redirect = {
-  mode: 'redirect'
-  statusCode?: 301 | 302 | 303 | 307 | 308
-  destination: string
-}
-
-type Rewrite = {
-  mode: 'rewrite'
-  destination: string
-}
-
-export type Fort = {
-  source: string
-} & (Block | Redirect | Rewrite) &
-  (InspectByIp | InspectByCookie | InspectByHeader)
+import { Fort } from './types'
 
 export const withFortress =
-  ({ forts, host }: { forts: Fort[]; host: string }) =>
+  ({ forts, host }: { forts: Fort[]; host?: string }) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
     prepareFortressInspect()
 
@@ -49,7 +14,7 @@ export const withFortress =
       serverRuntimeConfig: {
         ...config.serverRuntimeConfig,
         forts,
-        fortHost: host
+        fortHost: host ?? process.env.VERCEL_URL ?? '0.0.0.0'
       }
     }
   }
