@@ -1,4 +1,4 @@
-import { Login, Logout, auth } from "../../lib/firebase";
+import { Login, Logout, auth } from '../../lib/firebase'
 
 const IndexPage = () => (
   <>
@@ -10,11 +10,11 @@ const IndexPage = () => (
     <div>
       <pre>
         {auth.currentUser
-          ? auth.currentUser.displayName + "でログインしています"
-          : "ログインしていません"}
+          ? auth.currentUser.displayName + 'でログインしています'
+          : 'ログインしていません'}
       </pre>
     </div>
   </>
-);
+)
 
-export default IndexPage;
+export default IndexPage

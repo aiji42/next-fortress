@@ -2,7 +2,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import AuthContext from '../lib/AuthContext'
 import authReducer from '../lib/authReducer'
-import { listenAuthState } from '../lib/firebase'
+import { listenAuthState, fortressWithFirebase } from '../lib/firebase'
 import { useEffect, useReducer } from 'react'
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -11,7 +11,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     authReducer.initialState
   )
   useEffect(() => {
-    return listenAuthState(dispatch)
+    listenAuthState(dispatch)
+    fortressWithFirebase()
   }, [])
 
   return (

@@ -21,9 +21,6 @@ export const Login = () => {
     .auth()
     .signInWithPopup(provider)
     .then((result) => {
-      result.user?.getIdToken()?.then((idToken) => {
-        document.cookie = `firebaseIdToken=${idToken}`
-      })
       return result
     })
     .catch(function (error) {
@@ -52,6 +49,16 @@ export const listenAuthState = (dispatch: any) => {
         type: 'logout'
       })
     }
+  })
+}
+
+export const fortressWithFirebase = () => {
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user)
+      user
+        .getIdToken()
+        .then((token) => (document.cookie = `__fortressFirebase=${token}`))
+    else document.cookie = '__fortressFirebase=; max-age=0'
   })
 }
 
