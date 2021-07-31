@@ -24,7 +24,7 @@
   "homepage": "https://github.com/aiji42/next-fortress#readme",
   "scripts": {
     "lint": "eslint ./src/**/*.ts ./src/*.ts",
-    "format": "yarn prettier src/*.ts src/**/*.ts --write",
+    "format": "yarn prettier src/*.ts src/**/*.ts example/**/*.{ts,tsx} --write",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "build": "tsc && ts-add-module-exports",
