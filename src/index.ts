@@ -1,3 +1,2 @@
-export { withFortress } from './with-fortress'
-export { useFortressWithFirebase } from './firebase-client'
-export { getServerSideProps } from './inspect'
+import { withFortress } from './with-fortress'
+export default withFortress
