@@ -1,10 +1,18 @@
 import { NextConfig } from 'next/dist/next-server/server/config-shared'
 import { prepareFortressInspect } from './prepare-fortress-inspect'
 import { makeRewrites } from './make-rewrites'
-import { Fort } from './types'
+import { Fort, FortressFirebaseCredential } from './types'
 
 export const withFortress =
-  ({ forts, host }: { forts: Fort[]; host?: string }) =>
+  ({
+    forts,
+    host,
+    firebase
+  }: {
+    forts: Fort[]
+    host?: string
+    firebase?: FortressFirebaseCredential
+  }) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
     prepareFortressInspect()
 
@@ -14,7 +22,10 @@ export const withFortress =
       serverRuntimeConfig: {
         ...config.serverRuntimeConfig,
         forts,
-        fortHost: host ?? process.env.VERCEL_URL ?? '0.0.0.0'
+        fortHost: host ?? process.env.VERCEL_URL ?? '0.0.0.0',
+        fortress: {
+          firebase
+        }
       }
     }
   }

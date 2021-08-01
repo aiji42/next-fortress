@@ -3,6 +3,16 @@ export type InspectByIp = {
   ips: string | Array<string>
 }
 
+export type InspectByFirebase = {
+  inspectBy: 'firebase'
+}
+
+export type FortressFirebaseCredential = {
+  clientEmail: string
+  projectId: string
+  privateKey: string
+}
+
 // WIP
 export type InspectByCookie = {
   inspectBy: 'cookie'
@@ -31,7 +41,7 @@ export type Rewrite = {
 
 export type FortBase = {
   source: string
-} & (InspectByIp | InspectByCookie | InspectByHeader)
+} & (InspectByIp | InspectByFirebase | InspectByCookie | InspectByHeader)
 
 export type RewriteFort = FortBase & Rewrite
 

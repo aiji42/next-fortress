@@ -7,6 +7,7 @@ import { ParsedUrlQuery } from 'querystring'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as pathToRegexp from 'next/dist/compiled/path-to-regexp'
+import { verifyFirebaseIdToken } from './firebase'
 
 export const inspectIp = (
   ips: InspectByIp['ips'],
@@ -93,6 +94,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   let allow = false
   if (fort.inspectBy === 'ip' && ctx.req.headers['x-forwarded-for'])
     allow = inspectIp(fort.ips, ctx.req.headers['x-forwarded-for'])
+  if (fort.inspectBy === 'firebase') allow = await verifyFirebaseIdToken(ctx)
 
   if (allow) {
     await runReverseProxy(ctx, host)
@@ -103,7 +105,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       redirect: {
         destination: fort.destination,
-        statusCode: fort.statusCode ?? 301
+        statusCode: fort.statusCode ?? 302
       }
     }
 
