@@ -39,9 +39,20 @@ const withFortress = require('next-fortress')({
       mode: 'rewrite',
       destination: '/foo/rewritten2',
       ips: ["14.11.11.225"]
+    },
+    {
+      source: '/firebase/authed',
+      inspectBy: 'firebase',
+      mode: 'redirect',
+      destination: '/firebase'
     }
   ],
-  host: process.env.VERCEL_URL ?? 'http://localhost:3000'
+  host: process.env.VERCEL_URL ?? 'http://localhost:3000',
+  firebase: {
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY
+  }
 })
 
 const config = withFortress({

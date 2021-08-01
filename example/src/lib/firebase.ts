@@ -52,16 +52,6 @@ export const listenAuthState = (dispatch: any) => {
   })
 }
 
-export const fortressWithFirebase = () => {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user)
-      user
-        .getIdToken()
-        .then((token) => (document.cookie = `__fortressFirebase=${token}`))
-    else document.cookie = '__fortressFirebase=; max-age=0'
-  })
-}
-
 export const firebaseUser = () => {
   return firebase.auth().currentUser
 }

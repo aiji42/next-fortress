@@ -2939,12 +2939,9 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-next-fortress@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-1.1.0.tgz#80c2766483f20285b468e4ea5ee2919aba18d9c6"
-  integrity sha512-9dpqJhXEadL5R+KJ927VZu4HksjshV3G7CEQizMEbIA8upfFlgbbOEGeKREkdO+GuI/qkgtXYGCfbggMeI9dQg==
-  dependencies:
-    ip-cidr "^3.0.3"
+"next-fortress@link:..":
+  version "0.0.0"
+  uid ""
 
 next@11.0.1:
   version "11.0.1"
@@ -3536,14 +3533,6 @@ react-refresh@0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
   integrity sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
-
-react@17.0.2:
-  version "17.0.2"
-  resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
-  integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 read-pkg-up@^3.0.0:
   version "3.0.0"

@@ -2,17 +2,19 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import AuthContext from '../lib/AuthContext'
 import authReducer from '../lib/authReducer'
-import { listenAuthState, fortressWithFirebase } from '../lib/firebase'
+import { listenAuthState } from '../lib/firebase'
 import { useEffect, useReducer } from 'react'
+import { useFortressWithFirebase } from 'next-fortress/build/client'
+import firebase from 'firebase/app'
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useFortressWithFirebase(firebase)
   const [state, dispatch] = useReducer(
     authReducer.reducer,
     authReducer.initialState
   )
   useEffect(() => {
     listenAuthState(dispatch)
-    fortressWithFirebase()
   }, [])
 
   return (
