@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "add": "^2.0.6",
+    "aws-amplify": "^4.2.2",
     "firebase": "^8.8.1",
     "firebase-admin": "^9.11.0",
     "next": "11.0.1",
+    "next-auth": "^3.27.3",
     "next-fortress": "1.2.0",
     "nookies": "^2.5.2",
     "prismjs": "^1.24.1",
