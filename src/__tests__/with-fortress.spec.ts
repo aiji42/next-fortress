@@ -18,8 +18,11 @@ describe('withFortress', () => {
     })({})
 
     expect(config.serverRuntimeConfig).toEqual({
-      fortHost: '0.0.0.0',
-      forts: [{ inspectBy: 'ip', ips: '', mode: 'block', source: '/' }]
+      forts: [{ inspectBy: 'ip', ips: '', mode: 'block', source: '/' }],
+      fortress: {
+        host: '0.0.0.0',
+        firebase: undefined
+      }
     })
     return config.rewrites?.().then((rule) => {
       expect(rule).toEqual({
@@ -31,6 +34,43 @@ describe('withFortress', () => {
           }
         ]
       })
+    })
+  })
+
+  test('inspectByFirebase', () => {
+    const config = withFortress({
+      forts: [
+        {
+          source: '/need/auth',
+          inspectBy: 'firebase',
+          mode: 'redirect',
+          destination: '/login'
+        }
+      ],
+      firebase: {
+        clientEmail: 'example@example.com',
+        privateKey: 'private_key',
+        projectId: 'project_id'
+      }
+    })({})
+
+    expect(config.serverRuntimeConfig).toEqual({
+      forts: [
+        {
+          source: '/need/auth',
+          inspectBy: 'firebase',
+          mode: 'redirect',
+          destination: '/login'
+        }
+      ],
+      fortress: {
+        host: '0.0.0.0',
+        firebase: {
+          clientEmail: 'example@example.com',
+          privateKey: 'private_key',
+          projectId: 'project_id'
+        }
+      }
     })
   })
 })
