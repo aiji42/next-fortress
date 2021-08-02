@@ -150,7 +150,7 @@ const withFortress = require('next-fortress')({
       // ...controllMode1
     }
   ],
-  firebse: {
+  firebase: {
     clientEmail: 'your client emai',
     projectId: 'your project id',
     privateKey: 'your private key'
@@ -186,7 +186,7 @@ const withFortress = require('next-fortress')({
       statuCode: 307, // optional (default is 302)
     }
   ],
-  firebse: {
+  firebase: {
     clientEmail: 'your client emai',
     projectId: 'your project id',
     privateKey: 'your private key'
@@ -205,7 +205,7 @@ const withFortress = require('next-fortress')({
       statuCode: 401, // optional (default is 400)
     }
   ],
-  firebse: {
+  firebase: {
     clientEmail: 'your client emai',
     projectId: 'your project id',
     privateKey: 'your private key'
@@ -224,7 +224,7 @@ const withFortress = require('next-fortress')({
       destination: '/:slug', // to
     }
   ],
-  firebse: {
+  firebase: {
     clientEmail: 'your client emai',
     projectId: 'your project id',
     privateKey: 'your private key'
