@@ -12,12 +12,14 @@ const Authed: VFC = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>My Page | Firebase Example</title>
+        <title>My Page | Firebase Example | Next Fortress</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>My Page</h1>
+        <h1 className={styles.title}>Next Fortress</h1>
+        <h2>My Page</h2>
+
 
         <p>
           <strong>Hi! {auth.currentUser?.displayName}</strong>

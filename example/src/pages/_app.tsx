@@ -7,6 +7,7 @@ import { useEffect, useReducer } from 'react'
 import { useFortressWithFirebase } from 'next-fortress/build/client'
 import firebase from 'firebase/app'
 import 'prismjs/themes/prism-tomorrow.css'
+import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   useFortressWithFirebase(firebase)

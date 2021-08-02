@@ -12,12 +12,13 @@ const IndexPage: VFC = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Firebase Example</title>
+        <title>Firebase Example | Next Fortress</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Firebase Example</h1>
+        <h1 className={styles.title}>Next Fortress</h1>
+        <h2>Firebase example</h2>
 
         <p>This page can be accessed by anyone, with or without a login.</p>
         <p>My Page can be accessed only when you are logged in.</p>
