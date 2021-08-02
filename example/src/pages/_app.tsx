@@ -6,6 +6,7 @@ import { listenAuthState } from '../lib/firebase'
 import { useEffect, useReducer } from 'react'
 import { useFortressWithFirebase } from 'next-fortress/build/client'
 import firebase from 'firebase/app'
+import 'prismjs/themes/prism-tomorrow.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   useFortressWithFirebase(firebase)

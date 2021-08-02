@@ -41,7 +41,7 @@ const withFortress = require('next-fortress')({
       ips: ["14.11.11.225"]
     },
     {
-      source: '/firebase/authed',
+      source: '/firebase/:path',
       inspectBy: 'firebase',
       mode: 'redirect',
       destination: '/firebase'
