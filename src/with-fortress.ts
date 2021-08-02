@@ -22,8 +22,8 @@ export const withFortress =
       serverRuntimeConfig: {
         ...config.serverRuntimeConfig,
         forts,
-        fortHost: host ?? process.env.VERCEL_URL ?? '0.0.0.0',
         fortress: {
+          host: host ?? process.env.VERCEL_URL ?? '0.0.0.0',
           firebase
         }
       }

@@ -7,7 +7,7 @@ import { ParsedUrlQuery } from 'querystring'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as pathToRegexp from 'next/dist/compiled/path-to-regexp'
-import { verifyFirebaseIdToken } from './firebase'
+import { verifyFirebaseIdToken } from './firebase-server'
 
 export const inspectIp = (
   ips: InspectByIp['ips'],
@@ -89,7 +89,7 @@ const emptyProps = {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const fort: Fort =
     getConfig().serverRuntimeConfig.forts[<string>ctx.query.__key]
-  const host: string = getConfig().serverRuntimeConfig.fortHost
+  const host: string = getConfig().serverRuntimeConfig.fortress.host
 
   let allow = false
   if (fort.inspectBy === 'ip' && ctx.req.headers['x-forwarded-for'])
