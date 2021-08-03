@@ -20,8 +20,12 @@ Amplify.configure({
   oauth: {
     domain: process.env.NEXT_PUBLIC_COGNITO_DOMAIN,
     scope: ['openid', 'profile', 'email'],
-    redirectSignIn: process.env.NEXT_PUBLIC_COGNITO_REDIRECT_SIGN_IN,
-    redirectSignOut: process.env.NEXT_PUBLIC_COGNITO_REDIRECT_SIGN_OUT,
+    redirectSignIn: process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/cognito`
+      : 'http://localhost:3000/cognito',
+    redirectSignOut: process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/cognito`
+      : 'http://localhost:3000/cognito',
     responseType: 'code'
   },
   ssr: true
