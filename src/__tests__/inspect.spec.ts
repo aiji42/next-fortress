@@ -2,6 +2,7 @@ import { inspectIp, getPath, getServerSideProps } from '../inspect'
 import getConfig from 'next/config'
 import { reverseProxy } from '../reverse-proxy'
 import { verifyFirebaseIdToken } from '../firebase-server'
+import { verifyCognitoAuthenticatedUser } from '../cognito'
 import { GetServerSidePropsContext } from 'next'
 
 jest.mock('next/config', () => jest.fn())
@@ -9,6 +10,7 @@ jest.mock('../reverse-proxy', () => ({
   reverseProxy: jest.fn()
 }))
 jest.mock('../firebase-server', () => ({ verifyFirebaseIdToken: jest.fn() }))
+jest.mock('../cognito', () => ({ verifyCognitoAuthenticatedUser: jest.fn() }))
 
 describe('inspect', () => {
   test('inspectIp', () => {
@@ -101,6 +103,12 @@ describe('inspect', () => {
               inspectBy: 'firebase',
               mode: 'redirect',
               destination: '/login'
+            },
+            {
+              source: '/cognito',
+              inspectBy: 'cognito',
+              mode: 'redirect',
+              destination: '/login'
             }
           ],
           fortress: {
@@ -183,6 +191,19 @@ describe('inspect', () => {
       ;(verifyFirebaseIdToken as jest.Mock).mockReturnValue(false)
       return getServerSideProps({
         query: { __key: 3 }
+      } as unknown as GetServerSidePropsContext).then((result) => {
+        expect(result).toEqual({
+          redirect: {
+            destination: '/login',
+            statusCode: 302
+          }
+        })
+      })
+    })
+    test('Cognito based redirect', () => {
+      ;(verifyCognitoAuthenticatedUser as jest.Mock).mockReturnValue(false)
+      return getServerSideProps({
+        query: { __key: 4 }
       } as unknown as GetServerSidePropsContext).then((result) => {
         expect(result).toEqual({
           redirect: {

@@ -33,7 +33,9 @@
   },
   "peerDependencies": {
     "next": ">=10.2.0",
-    "react": ">=17.0.0"
+    "react": ">=17.0.0",
+    "aws-amplify": ">=3.0.0",
+    "firebase": ">=7.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
@@ -46,9 +48,11 @@
     "@types/react": "^17.0.15",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
+    "aws-amplify": "^4.2.2",
     "babel-jest": "^27.0.6",
     "eslint": "^7.31.0",
     "eslint-config-prettier": "^8.3.0",
+    "firebase": "^8.8.1",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
     "next": "^11.0.1",
@@ -61,7 +65,6 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "firebase": "^8.8.1",
     "firebase-admin": "^9.11.0",
     "ip-cidr": "^3.0.3",
     "nookies": "^2.5.2"
