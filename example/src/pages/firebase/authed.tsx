@@ -20,7 +20,6 @@ const Authed: VFC = () => {
         <h1 className={styles.title}>Next Fortress</h1>
         <h2>My Page</h2>
 
-
         <p>
           <strong>Hi! {auth.currentUser?.displayName}</strong>
         </p>

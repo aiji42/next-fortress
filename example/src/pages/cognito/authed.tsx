@@ -1,52 +1,39 @@
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
 import Image from 'next/image'
-import Prism from 'prismjs'
 import { useEffect, useState, VFC } from 'react'
+import Prism from 'prismjs'
 import { Auth } from 'aws-amplify'
 
-const IndexPage: VFC = () => {
-  const [login, setLogin] = useState(false)
+const Authed: VFC = () => {
+  const [session, setSession] = useState<undefined | { username: string }>()
   useEffect(() => {
     Prism.highlightAll()
     Auth.currentAuthenticatedUser()
-      .then(() => setLogin(true))
-      .catch(() => setLogin(false))
+      .then(setSession)
+      .catch(() => setSession(undefined))
   }, [])
   return (
     <div className={styles.container}>
       <Head>
-        <title>Cognito Example | Next Fortress</title>
+        <title>My Page | Cognito Example | Next Fortress</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
         <h1 className={styles.title}>Next Fortress</h1>
-        <h2>Cognito example</h2>
+        <h2>My Page</h2>
 
-        <p>This page can be accessed by anyone, with or without a login.</p>
-        <p>My Page can be accessed only when you are logged in.</p>
+        <p>
+          <strong>Hi! {session?.username}</strong>
+        </p>
+        <p>This page is accessible only to logged-in users.</p>
 
         <div className={styles.grid}>
-          {!login ? (
-            <button
-              className={styles.card}
-              onClick={() => Auth.federatedSignIn()}
-            >
-              <h2>Login</h2>
-              <p>You are Not logged in.</p>
-            </button>
-          ) : (
-            <button className={styles.card} onClick={() => Auth.signOut()}>
-              <h2>Logout</h2>
-              <p>You are logged in.</p>
-            </button>
-          )}
-
-          <a href="/cognito/authed" className={styles.card}>
-            <h2>Go My Page &rarr;</h2>
-            <p>Try it!</p>
-          </a>
+          <button className={styles.card} onClick={() => Auth.signOut()}>
+            <h2>Logout</h2>
+            <p>You will be redirected to the page you were on.</p>
+          </button>
         </div>
 
         <hr />
@@ -103,4 +90,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default IndexPage
+export default Authed
