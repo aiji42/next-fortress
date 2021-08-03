@@ -61,6 +61,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "aws-amplify": "^4.2.2",
     "firebase": "^8.8.1",
     "firebase-admin": "^9.11.0",
     "ip-cidr": "^3.0.3",
