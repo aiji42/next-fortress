@@ -4443,12 +4443,11 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-next-fortress@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-1.2.0.tgz#6b496ee1c4506f91540ff1ea507ca8ec2cba84f2"
-  integrity sha512-B+wIjOgU3pCDwbZCNqOSFzYsSe9pFyzTP4K17/bMdhFA7W3m5P62lTAfNy2HKrl9EUUxX//A8FvpaI/KZ3Q5Eg==
+next-fortress@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-1.3.0.tgz#39eca85aff4799e679d951e6bf6787911ea9cce7"
+  integrity sha512-kRgBdlaX34jWj5jrA7K0noVGVz/xLEzsOxZ0foIwNbMuZPLizFBB/PydGcWnrC8ITpQ6Wn+rypYuW/Y/se2yYQ==
   dependencies:
-    firebase "^8.8.1"
     firebase-admin "^9.11.0"
     ip-cidr "^3.0.3"
     nookies "^2.5.2"
