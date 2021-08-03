@@ -236,7 +236,72 @@ const withFortress = require('next-fortress')({
 
 ### When controlling by Cognito
 
-WIP
+If you are using Cognito, then the setup is very simple.
+
+```js
+// next.config.js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      // ...controllMode1
+    }
+  ]
+})
+```
+
+Add `ssr: true` to the client side `Amplify.configure`.
+
+```tsx
+Amplify.configure({
+  // ... your configurations,
+  ssr: true
+})
+```
+
+#### Redirect
+
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      mode: 'redirect',
+      source: '/need-login/:path*', // from
+      destination: '/login', // to
+      statuCode: 307, // optional (default is 302)
+    }
+  ]
+})
+```
+
+#### Block
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      mode: 'block',
+      source: '/need-login/:path*', // from
+      statuCode: 401, // optional (default is 400)
+    }
+  ]
+})
+```
+
+#### Rewrite
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      mode: 'rewrite',
+      source: '/need-login/:slug', // from
+      destination: '/:slug', // to
+    }
+  ]
+})
+```
 
 ---
 
