@@ -7,10 +7,6 @@ export type InspectByFirebase = {
   inspectBy: 'firebase'
 }
 
-export type InspectByCognito = {
-  inspectBy: 'cognito'
-}
-
 export type FortressFirebaseCredential = {
   clientEmail: string
   projectId: string
@@ -45,13 +41,7 @@ export type Rewrite = {
 
 export type FortBase = {
   source: string
-} & (
-  | InspectByIp
-  | InspectByFirebase
-  | InspectByCognito
-  | InspectByCookie
-  | InspectByHeader
-)
+} & (InspectByIp | InspectByFirebase | InspectByCookie | InspectByHeader)
 
 export type RewriteFort = FortBase & Rewrite
 
