@@ -8,6 +8,7 @@ import { ParsedUrlQuery } from 'querystring'
 // @ts-ignore
 import * as pathToRegexp from 'next/dist/compiled/path-to-regexp'
 import { verifyFirebaseIdToken } from './firebase-server'
+import { verifyCognitoAuthenticatedUser } from './cognito'
 
 export const inspectIp = (
   ips: InspectByIp['ips'],
@@ -95,6 +96,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (fort.inspectBy === 'ip' && ctx.req.headers['x-forwarded-for'])
     allow = inspectIp(fort.ips, ctx.req.headers['x-forwarded-for'])
   if (fort.inspectBy === 'firebase') allow = await verifyFirebaseIdToken(ctx)
+  if (fort.inspectBy === 'cognito')
+    allow = await verifyCognitoAuthenticatedUser(ctx)
 
   if (allow) {
     await runReverseProxy(ctx, host)

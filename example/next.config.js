@@ -45,6 +45,12 @@ const withFortress = require('next-fortress')({
       inspectBy: 'firebase',
       mode: 'redirect',
       destination: '/firebase'
+    },
+    {
+      source: '/cognito/:path',
+      inspectBy: 'cognito',
+      mode: 'redirect',
+      destination: '/cognito'
     }
   ],
   host: process.env.VERCEL_URL ?? 'http://localhost:3000',
