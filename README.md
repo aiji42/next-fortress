@@ -17,6 +17,7 @@ npm install --save next-fortress
 
 ## Usage
 Write `withFortress` in `next.config.js`.
+
 ```js
 // next.config.js
 const withFortress = require('next-fortress')({
@@ -49,6 +50,12 @@ module.exports = withFortress({
   // write your next.js configuration values.
 })
 ```
+
+- `forts: Fort[]`: See [Use Case](#use-case).
+- `host?: string`: In order to inspect the request and control the response, a reverse proxy is launched internally. Therefore, it is necessary to specify the host of the target deployment itself.
+- `firebase?: FirebaseAdminCredential`: See [When controlling by Firebase auth](#when-controlling-by-firebase-auth). The Default value is `process.env.VERCEL_URL ?? '0.0.0.0'`
+- `prepared?: boolean`: See [About the file for inspection](#about-the-file-for-inspection). The Default value is `false`
+
 
 If you are using next-compose-plugins
 ```js
