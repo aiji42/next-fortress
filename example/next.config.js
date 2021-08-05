@@ -51,6 +51,12 @@ const withFortress = require('next-fortress')({
       inspectBy: 'cognito',
       mode: 'redirect',
       destination: '/cognito'
+    },
+    {
+      source: '/auth0/:path',
+      inspectBy: 'auth0',
+      mode: 'redirect',
+      destination: '/auth0'
     }
   ],
   host: process.env.VERCEL_ENV === 'production'

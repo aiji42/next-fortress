@@ -84,12 +84,12 @@ const withFortress = require('next-fortress')({
     {
       inspectBy: 'ip',
       ips: '11.22.33.44', // string | Array<string>
-      // ...controllMode1
+      // ...controlMode
     },
     {
       inspectBy: 'ip',
       ips: ['11.22.33.0/24', '111.222.0.0/16'], // It can be written in CIDR format.
-      // ...controllMode2
+      // ...controlMode
     }
   ]
 })
@@ -102,10 +102,12 @@ const withFortress = require('next-fortress')({
     {
       inspectBy: 'ip',
       ips: ['11.22.33.0/24', '111.222.0.0/16'],
+      // ↓ control mode ↓
       mode: 'redirect',
       source: '/redirectable/:path*', // from
       destination: '/top', // to
       statuCode: 307, // optional (default is 302)
+      // ↑ control mode ↑
     }
   ]
 })
@@ -118,9 +120,11 @@ const withFortress = require('next-fortress')({
     {
       inspectBy: 'ip',
       ips: ['11.22.33.0/24', '111.222.0.0/16'],
+      // ↓ control mode ↓
       mode: 'block',
       source: '/blockable/:path*', // from
       statuCode: 401, // optional (default is 400)
+      // ↑ control mode ↑
     }
   ]
 })
@@ -133,9 +137,11 @@ const withFortress = require('next-fortress')({
     {
       inspectBy: 'ip',
       ips: ['11.22.33.0/24', '111.222.0.0/16'],
+      // ↓ control mode ↓
       mode: 'rewrite',
       source: '/rewritable/:slug', // from
       destination: '/rewriten/:slug', // to
+      // ↑ control mode ↑
     }
   ]
 })
@@ -154,7 +160,7 @@ const withFortress = require('next-fortress')({
   forts: [
     {
       inspectBy: 'firebase',
-      // ...controllMode1
+      // ...controlMode
     }
   ],
   firebase: {
@@ -164,6 +170,11 @@ const withFortress = require('next-fortress')({
   }
 })
 ```
+
+**Control Mode** 
+- `redirect`: See [Redirect](#redirect)
+- `block`: See [Access Block](#access-block)
+- `rewrite`: See [Rewrite](#rewrite)
 
 Put useFortressWithFirebase in your page/_app.jsx.  
 Without this code, the authentication status cannot be verified on the server side.
@@ -180,65 +191,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 ```
 
-#### Redirect
-
-```js
-const withFortress = require('next-fortress')({
-  forts: [
-    {
-      inspectBy: 'firebase',
-      mode: 'redirect',
-      source: '/need-login/:path*', // from
-      destination: '/login', // to
-      statuCode: 307, // optional (default is 302)
-    }
-  ],
-  firebase: {
-    clientEmail: 'your client emai',
-    projectId: 'your project id',
-    privateKey: 'your private key'
-  }
-})
-```
-
-#### Block
-```js
-const withFortress = require('next-fortress')({
-  forts: [
-    {
-      inspectBy: 'firebase',
-      mode: 'block',
-      source: '/need-login/:path*', // from
-      statuCode: 401, // optional (default is 400)
-    }
-  ],
-  firebase: {
-    clientEmail: 'your client emai',
-    projectId: 'your project id',
-    privateKey: 'your private key'
-  }
-})
-```
-
-#### Rewrite
-```js
-const withFortress = require('next-fortress')({
-  forts: [
-    {
-      inspectBy: 'firebase',
-      mode: 'rewrite',
-      source: '/need-login/:slug', // from
-      destination: '/:slug', // to
-    }
-  ],
-  firebase: {
-    clientEmail: 'your client emai',
-    projectId: 'your project id',
-    privateKey: 'your private key'
-  }
-})
-```
-
 ---
 
 ### When controlling by Cognito
@@ -251,11 +203,16 @@ const withFortress = require('next-fortress')({
   forts: [
     {
       inspectBy: 'cognito',
-      // ...controllMode1
+      // ...controlMode
     }
   ]
 })
 ```
+
+**Control Mode** 
+- `redirect`: See [Redirect](#redirect)
+- `block`: See [Access Block](#access-block)
+- `rewrite`: See [Rewrite](#rewrite)
 
 Add `ssr: true` to the client side `Amplify.configure`.
 
@@ -266,55 +223,28 @@ Amplify.configure({
 })
 ```
 
-#### Redirect
-
-```js
-const withFortress = require('next-fortress')({
-  forts: [
-    {
-      inspectBy: 'cognito',
-      mode: 'redirect',
-      source: '/need-login/:path*', // from
-      destination: '/login', // to
-      statuCode: 307, // optional (default is 302)
-    }
-  ]
-})
-```
-
-#### Block
-```js
-const withFortress = require('next-fortress')({
-  forts: [
-    {
-      inspectBy: 'cognito',
-      mode: 'block',
-      source: '/need-login/:path*', // from
-      statuCode: 401, // optional (default is 400)
-    }
-  ]
-})
-```
-
-#### Rewrite
-```js
-const withFortress = require('next-fortress')({
-  forts: [
-    {
-      inspectBy: 'cognito',
-      mode: 'rewrite',
-      source: '/need-login/:slug', // from
-      destination: '/:slug', // to
-    }
-  ]
-})
-```
-
 ---
 
 ### When controlling by Auth0
 
-WIP
+Currently, Auth0 only supports mode of [Regular Web Application](https://auth0.com/docs/get-started/create-apps/regular-web-apps).
+
+```js
+// next.config.js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'auth0',
+      // ...controlMode
+    }
+  ]
+})
+```
+
+**Control Mode** 
+- `redirect`: See [Redirect](#redirect)
+- `block`: See [Access Block](#access-block)
+- `rewrite`: See [Rewrite](#rewrite)
 
 ---
 
@@ -329,7 +259,7 @@ const withFortress = require('next-fortress')({
   forts: [
     {
       inspectBy: 'custom',
-      // ...controllMode
+      // ...controlMode
     }
   ],
   prepare: true
