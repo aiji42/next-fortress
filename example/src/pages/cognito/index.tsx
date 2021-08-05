@@ -1,35 +1,52 @@
-import { Logout, auth } from '../../lib/firebase'
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useEffect, VFC } from 'react'
 import Prism from 'prismjs'
+import { useEffect, useState, VFC } from 'react'
+import { Auth } from 'aws-amplify'
 
-const Authed: VFC = () => {
+const IndexPage: VFC = () => {
+  const [login, setLogin] = useState(false)
   useEffect(() => {
     Prism.highlightAll()
+    Auth.currentAuthenticatedUser()
+      .then(() => setLogin(true))
+      .catch(() => setLogin(false))
   }, [])
   return (
     <div className={styles.container}>
       <Head>
-        <title>My Page | Firebase Example | Next Fortress</title>
+        <title>Cognito Example | Next Fortress</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
         <h1 className={styles.title}>Next Fortress</h1>
-        <h2>My Page</h2>
+        <h2>Cognito example</h2>
 
-        <p>
-          <strong>Hi! {auth.currentUser?.displayName}</strong>
-        </p>
-        <p>This page is accessible only to logged-in users.</p>
+        <p>This page can be accessed by anyone, with or without a login.</p>
+        <p>My Page can be accessed only when you are logged in.</p>
 
         <div className={styles.grid}>
-          <button className={styles.card} onClick={() => Logout()}>
-            <h2>Logout</h2>
-            <p>You will be redirected to the page you were on.</p>
-          </button>
+          {!login ? (
+            <button
+              className={styles.card}
+              onClick={() => Auth.federatedSignIn()}
+            >
+              <h2>Login</h2>
+              <p>You are Not logged in.</p>
+            </button>
+          ) : (
+            <button className={styles.card} onClick={() => Auth.signOut()}>
+              <h2>Logout</h2>
+              <p>You are logged in.</p>
+            </button>
+          )}
+
+          <a href="/cognito/authed" className={styles.card}>
+            <h2>Go My Page &rarr;</h2>
+            <p>Try it!</p>
+          </a>
         </div>
 
         <hr />
@@ -40,17 +57,12 @@ const Authed: VFC = () => {
 const withFortress = require('next-fortress')({
   forts: [
     {
-      inspectBy: 'firebase',
+      inspectBy: 'cognito',
       mode: 'redirect',
-      source: '/firebase/:path',
-      destination: '/firebase'
+      source: '/cognito/:path',
+      destination: '/cognito'
     }
-  ],
-  firebase: {
-    clientEmail: 'your client emai',
-    projectId: 'your project id',
-    privateKey: 'your private key'
-  }
+  ]
 })
 module.exports = withFortress({})
 `}
@@ -60,12 +72,14 @@ module.exports = withFortress({})
         <pre style={{ maxWidth: 800, width: '100%' }}>
           <code className="language-javascript">
             {`//pages/_app.tsx
-import { useFortressWithFirebase } from 'next-fortress/build/client'
-import firebase from 'firebase/app'
+import Amplify from 'aws-amplify'
+
+Amplify.configure({
+  // ..., your configure
+  ssr: true
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
-  useFortressWithFirebase(firebase)
-
   return <Component {...pageProps} />
 }
 `}
@@ -89,4 +103,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default Authed
+export default IndexPage

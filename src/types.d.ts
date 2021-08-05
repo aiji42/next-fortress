@@ -1,3 +1,5 @@
+import { GetServerSidePropsContext } from 'next'
+
 export type InspectByIp = {
   inspectBy: 'ip'
   ips: string | Array<string>
@@ -11,6 +13,14 @@ export type FortressFirebaseCredential = {
   clientEmail: string
   projectId: string
   privateKey: string
+}
+
+export type InspectByCognito = {
+  inspectBy: 'cognito'
+}
+
+export type InspectByCustom = {
+  inspectBy: 'custom'
 }
 
 // WIP
@@ -39,9 +49,21 @@ export type Rewrite = {
   destination: string
 }
 
+export type Operator = (
+  fort: Fort,
+  ctx: GetServerSidePropsContext
+) => Promise<boolean>
+
 export type FortBase = {
   source: string
-} & (InspectByIp | InspectByFirebase | InspectByCookie | InspectByHeader)
+} & (
+  | InspectByIp
+  | InspectByFirebase
+  | InspectByCognito
+  | InspectByCookie
+  | InspectByHeader
+  | InspectByCustom
+)
 
 export type RewriteFort = FortBase & Rewrite
 

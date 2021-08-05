@@ -7,14 +7,21 @@ export const withFortress =
   ({
     forts,
     host,
-    firebase
+    firebase,
+    prepared = false
   }: {
     forts: Fort[]
     host?: string
     firebase?: FortressFirebaseCredential
+    prepared?: boolean
   }) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
-    prepareFortressInspect()
+    prepareFortressInspect(
+      [...new Set(forts.map(({ inspectBy }) => inspectBy))].filter(
+        (inspect) => inspect !== 'custom'
+      ),
+      prepared
+    )
 
     return {
       ...config,

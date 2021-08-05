@@ -1,18 +1,22 @@
-import { Logout, auth } from '../../lib/firebase'
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useEffect, VFC } from 'react'
+import { useEffect, useState, VFC } from 'react'
 import Prism from 'prismjs'
+import { Auth } from 'aws-amplify'
 
 const Authed: VFC = () => {
+  const [session, setSession] = useState<undefined | { username: string }>()
   useEffect(() => {
     Prism.highlightAll()
+    Auth.currentAuthenticatedUser()
+      .then(setSession)
+      .catch(() => setSession(undefined))
   }, [])
   return (
     <div className={styles.container}>
       <Head>
-        <title>My Page | Firebase Example | Next Fortress</title>
+        <title>My Page | Cognito Example | Next Fortress</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -21,12 +25,12 @@ const Authed: VFC = () => {
         <h2>My Page</h2>
 
         <p>
-          <strong>Hi! {auth.currentUser?.displayName}</strong>
+          <strong>Hi! {session?.username}</strong>
         </p>
         <p>This page is accessible only to logged-in users.</p>
 
         <div className={styles.grid}>
-          <button className={styles.card} onClick={() => Logout()}>
+          <button className={styles.card} onClick={() => Auth.signOut()}>
             <h2>Logout</h2>
             <p>You will be redirected to the page you were on.</p>
           </button>
@@ -40,17 +44,12 @@ const Authed: VFC = () => {
 const withFortress = require('next-fortress')({
   forts: [
     {
-      inspectBy: 'firebase',
+      inspectBy: 'cognito',
       mode: 'redirect',
-      source: '/firebase/:path',
-      destination: '/firebase'
+      source: '/cognito/:path',
+      destination: '/cognito'
     }
-  ],
-  firebase: {
-    clientEmail: 'your client emai',
-    projectId: 'your project id',
-    privateKey: 'your private key'
-  }
+  ]
 })
 module.exports = withFortress({})
 `}
@@ -60,12 +59,14 @@ module.exports = withFortress({})
         <pre style={{ maxWidth: 800, width: '100%' }}>
           <code className="language-javascript">
             {`//pages/_app.tsx
-import { useFortressWithFirebase } from 'next-fortress/build/client'
-import firebase from 'firebase/app'
+import Amplify from 'aws-amplify'
+
+Amplify.configure({
+  // ..., your configure
+  ssr: true
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
-  useFortressWithFirebase(firebase)
-
   return <Component {...pageProps} />
 }
 `}

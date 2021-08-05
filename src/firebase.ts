@@ -2,7 +2,7 @@ import * as firebaseAdmin from 'firebase-admin'
 import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 import getConfig from 'next/config'
-import { FortressFirebaseCredential } from './types'
+import { FortressFirebaseCredential, Operator } from './types'
 import { FIREBASE_COOKIE_KEY } from './constants'
 
 const { serverRuntimeConfig } = getConfig()
@@ -30,4 +30,9 @@ export const verifyFirebaseIdToken = async (
     .verifyIdToken(token)
     .then(() => true)
     .catch(() => false)
+}
+
+export const firebase: Operator = async (fort, ctx) => {
+  if (fort.inspectBy !== 'firebase') return false
+  return verifyFirebaseIdToken(ctx)
 }

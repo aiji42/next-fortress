@@ -45,9 +45,17 @@ const withFortress = require('next-fortress')({
       inspectBy: 'firebase',
       mode: 'redirect',
       destination: '/firebase'
+    },
+    {
+      source: '/cognito/:path',
+      inspectBy: 'cognito',
+      mode: 'redirect',
+      destination: '/cognito'
     }
   ],
-  host: process.env.VERCEL_URL ?? 'http://localhost:3000',
+  host: process.env.VERCEL_ENV === 'production'
+    ? 'next-fortress.vercel.app'
+    : (process.env.VERCEL_URL ?? 'http://localhost:3000'),
   firebase: {
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,

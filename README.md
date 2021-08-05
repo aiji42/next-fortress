@@ -17,6 +17,7 @@ npm install --save next-fortress
 
 ## Usage
 Write `withFortress` in `next.config.js`.
+
 ```js
 // next.config.js
 const withFortress = require('next-fortress')({
@@ -45,10 +46,16 @@ const withFortress = require('next-fortress')({
   }
 })
 
-module.export = withFortress({
+module.exports = withFortress({
   // write your next.js configuration values.
 })
 ```
+
+- `forts: Fort[]`: See [Use Case](#use-case).
+- `host?: string`: In order to inspect the request and control the response, a reverse proxy is launched internally. Therefore, it is necessary to specify the host of the target deployment itself. The Default value is `process.env.VERCEL_URL ?? '0.0.0.0'`
+- `firebase?: FirebaseAdminCredential`: See [When controlling by Firebase auth](#when-controlling-by-firebase-auth).
+- `prepared?: boolean`: See [About the file for inspection](#about-the-file-for-inspection). The Default value is `false`
+
 
 If you are using next-compose-plugins
 ```js
@@ -236,7 +243,72 @@ const withFortress = require('next-fortress')({
 
 ### When controlling by Cognito
 
-WIP
+If you are using Cognito, then the setup is very simple.
+
+```js
+// next.config.js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      // ...controllMode1
+    }
+  ]
+})
+```
+
+Add `ssr: true` to the client side `Amplify.configure`.
+
+```tsx
+Amplify.configure({
+  // ... your configurations,
+  ssr: true
+})
+```
+
+#### Redirect
+
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      mode: 'redirect',
+      source: '/need-login/:path*', // from
+      destination: '/login', // to
+      statuCode: 307, // optional (default is 302)
+    }
+  ]
+})
+```
+
+#### Block
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      mode: 'block',
+      source: '/need-login/:path*', // from
+      statuCode: 401, // optional (default is 400)
+    }
+  ]
+})
+```
+
+#### Rewrite
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'cognito',
+      mode: 'rewrite',
+      source: '/need-login/:slug', // from
+      destination: '/:slug', // to
+    }
+  ]
+})
+```
 
 ---
 
@@ -246,11 +318,62 @@ WIP
 
 ---
 
-### When controlling by Other Auth Providers
+### When Customizing the inspection method
 
-WIP
+It is possible to self-define the method of inspecting requests.  
+For `prepare: true`, see [About the file for inspection](#about-the-file-for-inspection).
+
+```js
+// next.config.js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'custom',
+      // ...controllMode
+    }
+  ],
+  prepare: true
+})
+```
+
+Customize `pages/_fortress/[__key].js` as follows.
+
+```ts
+// pages/_fortress/[__key].js
+import { Inspector } from 'next-fortress/build/inspector'
+import { controller } from 'next-fortress/build/controller'
+
+// (fort: Fort, ctx: GetServerSideContext) => Promise<boolean>
+const customInspector = async (fort, ctx) => {
+  // Write your custom inspect method
+  // Return true when directing the request to normal content, false when causing it to fallback.
+}
+const inspector = new Inspector().add(customInspector)
+
+export const getServerSideProps = async (ctx) => {
+  return controller(inspector, ctx)
+}
+const Fortress = () => null
+export default Fortress
+```
 
 ---
+
+## About the file for inspection
+
+This plugin will automatically add `pages/_fortress/[__key].js` when the server is started.  
+It is used to inspect requests and control responses based on the `forts` you set.  
+It will always be overwritten on server starts to keep up with changes in the plugin.
+
+If for some reason you want to prevent overwriting (e.g. custom processing), or if you can't create that file automatically (e.g. monorepo configuration), you can switch to manual by adding `parepare: true` to the configuration.  
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    { ... }
+  ],
+  prepared: true
+})
+```
 
 ## :construction: Caution
 
