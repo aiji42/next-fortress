@@ -311,13 +311,48 @@ WIP
 
 ---
 
-### When controlling by Other Auth Providers
+### When Customizing the inspection method
 
-WIP
+It is possible to self-define the method of inspecting requests.  
+For `prepare: true`, see [About the file for inspection](#about-the-file-for-inspection).
+
+```js
+// next.config.js
+const withFortress = require('next-fortress')({
+  forts: [
+    {
+      inspectBy: 'custom',
+      // ...controllMode
+    }
+  ],
+  prepare: true
+})
+```
+
+Customize `pages/_fortress/[__key].js` as follows.
+
+```ts
+// pages/_fortress/[__key].js
+import { Inspector } from 'next-fortress/build/inspector'
+import { controller } from 'next-fortress/build/controller'
+
+// (fort: Fort, ctx: GetServerSideContext) => Promise<boolean>
+const customInspector = async (fort, ctx) => {
+  // Write your custom inspect method
+  // Return true when directing the request to normal content, false when causing it to fallback.
+}
+const inspector = new Inspector().add(customInspector)
+
+export const getServerSideProps = async (ctx) => {
+  return controller(inspector, ctx)
+}
+const Fortress = () => null
+export default Fortress
+```
 
 ---
 
-## About `pages/_fortress/[__key].js`
+## About the file for inspection
 
 This plugin will automatically add `pages/_fortress/[__key].js` when the server is started.  
 It is used to inspect requests and control responses based on the `forts` you set.  
