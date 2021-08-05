@@ -317,6 +317,22 @@ WIP
 
 ---
 
+## About `pages/_fortress/[__key].js`
+
+This plugin will automatically add `pages/_fortress/[__key].js` when the server is started.  
+It is used to inspect requests and control responses based on the `forts` you set.  
+It will always be overwritten on server starts to keep up with changes in the plugin.
+
+If for some reason you want to prevent overwriting (e.g. custom processing), or if you can't create that file automatically (e.g. monorepo configuration), you can switch to manual by adding `parepare: true` to the configuration.  
+```js
+const withFortress = require('next-fortress')({
+  forts: [
+    { ... }
+  ],
+  prepared: true
+})
+```
+
 ## :construction: Caution
 
 **Please do not use `next/link` to generate links to pages subject to access control.**
