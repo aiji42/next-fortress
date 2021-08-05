@@ -9,6 +9,7 @@ import firebase from 'firebase/app'
 import 'prismjs/themes/prism-tomorrow.css'
 import '../styles/globals.css'
 import Amplify from 'aws-amplify'
+import { UserProvider } from '@auth0/nextjs-auth0'
 
 Amplify.configure({
   aws_cognito_identity_pool_id:
@@ -48,9 +49,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
-    <AuthContext.Provider value={state}>
-      <Component {...pageProps} />
-    </AuthContext.Provider>
+    <UserProvider>
+      <AuthContext.Provider value={state}>
+        <Component {...pageProps} />
+      </AuthContext.Provider>
+    </UserProvider>
   )
 }
 export default MyApp
