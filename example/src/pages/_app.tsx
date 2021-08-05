@@ -21,13 +21,13 @@ Amplify.configure({
     domain: process.env.NEXT_PUBLIC_COGNITO_DOMAIN,
     scope: ['openid', 'profile', 'email'],
     redirectSignIn:
-      process.env.VERCEL_ENV === 'production'
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
         ? 'https://next-fortress.vercel.app/cognito'
         : process.env.NEXT_PUBLIC_VERCEL_URL
         ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/cognito`
         : 'http://localhost:3000/cognito',
     redirectSignOut:
-      process.env.VERCEL_ENV === 'production'
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
         ? 'https://next-fortress.vercel.app/cognito'
         : process.env.NEXT_PUBLIC_VERCEL_URL
         ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/cognito`
