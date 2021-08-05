@@ -14,7 +14,9 @@ export const withFortress =
     firebase?: FortressFirebaseCredential
   }) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
-    prepareFortressInspect()
+    prepareFortressInspect([
+      ...new Set(forts.map(({ inspectBy }) => inspectBy))
+    ])
 
     return {
       ...config,

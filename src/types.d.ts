@@ -1,3 +1,5 @@
+import { GetServerSidePropsContext } from 'next'
+
 export type InspectByIp = {
   inspectBy: 'ip'
   ips: string | Array<string>
@@ -42,6 +44,11 @@ export type Rewrite = {
   mode: 'rewrite'
   destination: string
 }
+
+export type Operator = (
+  fort: Fort,
+  ctx: GetServerSidePropsContext
+) => Promise<boolean>
 
 export type FortBase = {
   source: string

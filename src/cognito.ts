@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext } from 'next'
 import { withSSRContext } from 'aws-amplify'
+import { Operator } from './types'
 
 export const verifyCognitoAuthenticatedUser = async (
   ctx: GetServerSidePropsContext
@@ -14,4 +15,9 @@ export const verifyCognitoAuthenticatedUser = async (
   }
 
   return authenticated
+}
+
+export const cognito: Operator = async (fort, ctx) => {
+  if (fort.inspectBy !== 'cognito') return false
+  return verifyCognitoAuthenticatedUser(ctx)
 }
