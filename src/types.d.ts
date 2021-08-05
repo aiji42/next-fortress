@@ -19,6 +19,10 @@ export type InspectByCognito = {
   inspectBy: 'cognito'
 }
 
+export type InspectByAuth0 = {
+  inspectBy: 'auth0'
+}
+
 export type InspectByCustom = {
   inspectBy: 'custom'
 }
@@ -60,6 +64,7 @@ export type FortBase = {
   | InspectByIp
   | InspectByFirebase
   | InspectByCognito
+  | InspectByAuth0
   | InspectByCookie
   | InspectByHeader
   | InspectByCustom
