@@ -27,57 +27,112 @@ describe('prepareFortressInspect', () => {
   it('must make fortress-inspect script', () => {
     ;(findPagesDir as jest.Mock).mockReturnValue('pages')
     ;(existsSync as jest.Mock).mockReturnValue(false)
-    prepareFortressInspect()
+    prepareFortressInspect(['ip'])
     expect(mkdirSync).toBeCalled()
     expect(writeFileSync).toBeCalledWith(
       'pages/_fortress/[__key].js',
-      `export { getServerSideProps } from 'next-fortress/build/inspect'
-const Inspect = () => null
-export default Inspect
+      `import { Inspector } from 'next-fortress/build/inspector'
+import { controller } from 'next-fortress/build/controller'
+import { ip } from 'next-fortress/build/ip'
+const inspector = new Inspector().add(ip)
+export const getServerSideProps = async (ctx) => {
+  return controller(inspector, ctx)
+}
+const Fortress = () => null
+export default Fortress
 `
     )
   })
   it('must not call mkdirSync when existing directory', () => {
     ;(findPagesDir as jest.Mock).mockReturnValue('pages')
     ;(existsSync as jest.Mock).mockReturnValue(true)
-    prepareFortressInspect()
+    prepareFortressInspect([])
     expect(mkdirSync).not.toBeCalled()
   })
   it('must not call mkdirSync when already prepared', () => {
     ;(findPagesDir as jest.Mock).mockReturnValue('pages')
     ;(existsSync as jest.Mock).mockReturnValue(true)
-    prepareFortressInspect(true)
+    prepareFortressInspect([], true)
     expect(mkdirSync).not.toBeCalled()
   })
   it('must not work when inspect file is existing', () => {
-    prepareFortressInspect()
-    expect(writeFileSync).not.toBeCalled()
     ;(existsSync as jest.Mock).mockImplementation((path: string) =>
       path.includes('[__key].ts')
     )
-    prepareFortressInspect()
-    expect(writeFileSync).not.toBeCalled()
+    prepareFortressInspect(['ip'])
+    expect(writeFileSync).toBeCalledWith(
+      'pages/_fortress/[__key].ts',
+      `import { Inspector } from 'next-fortress/build/inspector'
+import { controller } from 'next-fortress/build/controller'
+import { GetServerSideProps } from 'next'
+import { ip } from 'next-fortress/build/ip'
+const inspector = new Inspector().add(ip)
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return controller(inspector, ctx)
+}
+const Fortress = () => null
+export default Fortress
+`
+    )
     ;(existsSync as jest.Mock).mockImplementation((path: string) =>
       path.includes('[__key].tsx')
     )
-    prepareFortressInspect()
-    expect(writeFileSync).not.toBeCalled()
+    prepareFortressInspect(['ip'])
+    expect(writeFileSync).toBeCalledWith(
+      'pages/_fortress/[__key].tsx',
+      `import { Inspector } from 'next-fortress/build/inspector'
+import { controller } from 'next-fortress/build/controller'
+import { GetServerSideProps } from 'next'
+import { ip } from 'next-fortress/build/ip'
+const inspector = new Inspector().add(ip)
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return controller(inspector, ctx)
+}
+const Fortress = () => null
+export default Fortress
+`
+    )
     ;(existsSync as jest.Mock).mockImplementation((path: string) =>
       path.includes('[__key].js')
     )
-    prepareFortressInspect()
-    expect(writeFileSync).not.toBeCalled()
+    prepareFortressInspect(['ip'])
+    expect(writeFileSync).toBeCalledWith(
+      'pages/_fortress/[__key].js',
+      `import { Inspector } from 'next-fortress/build/inspector'
+import { controller } from 'next-fortress/build/controller'
+import { ip } from 'next-fortress/build/ip'
+const inspector = new Inspector().add(ip)
+export const getServerSideProps = async (ctx) => {
+  return controller(inspector, ctx)
+}
+const Fortress = () => null
+export default Fortress
+`
+    )
     ;(existsSync as jest.Mock).mockImplementation((path: string) =>
       path.includes('[__key].jsx')
     )
-    prepareFortressInspect()
-    expect(writeFileSync).not.toBeCalled()
+    prepareFortressInspect(['ip'])
+    expect(writeFileSync).toBeCalledWith(
+      'pages/_fortress/[__key].jsx',
+      `import { Inspector } from 'next-fortress/build/inspector'
+import { controller } from 'next-fortress/build/controller'
+import { ip } from 'next-fortress/build/ip'
+const inspector = new Inspector().add(ip)
+export const getServerSideProps = async (ctx) => {
+  return controller(inspector, ctx)
+}
+const Fortress = () => null
+export default Fortress
+`
+    )
   })
+
   it('must request a self-creation when an exception is raised', () => {
     ;(findPagesDir as jest.Mock).mockImplementation(() => {
       throw new Error('some error.')
     })
-    prepareFortressInspect()
+    prepareFortressInspect([])
     expect(writeFileSync).not.toBeCalled()
     expect(mockExit).toBeCalledWith(1)
   })

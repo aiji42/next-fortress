@@ -1,4 +1,5 @@
 import { withFortress } from '../with-fortress'
+import { prepareFortressInspect } from '../prepare-fortress-inspect'
 
 jest.mock('../prepare-fortress-inspect', () => ({
   prepareFortressInspect: jest.fn()
@@ -24,6 +25,7 @@ describe('withFortress', () => {
         firebase: undefined
       }
     })
+    expect(prepareFortressInspect).toBeCalledWith(['ip'])
     return config.rewrites?.().then((rule) => {
       expect(rule).toEqual({
         beforeFiles: [
@@ -45,6 +47,12 @@ describe('withFortress', () => {
           inspectBy: 'firebase',
           mode: 'redirect',
           destination: '/login'
+        },
+        {
+          source: '/need/auth2',
+          inspectBy: 'firebase',
+          mode: 'redirect',
+          destination: '/login'
         }
       ],
       firebase: {
@@ -54,10 +62,17 @@ describe('withFortress', () => {
       }
     })({})
 
+    expect(prepareFortressInspect).toBeCalledWith(['firebase'])
     expect(config.serverRuntimeConfig).toEqual({
       forts: [
         {
           source: '/need/auth',
+          inspectBy: 'firebase',
+          mode: 'redirect',
+          destination: '/login'
+        },
+        {
+          source: '/need/auth2',
           inspectBy: 'firebase',
           mode: 'redirect',
           destination: '/login'
