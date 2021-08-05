@@ -25,7 +25,7 @@ describe('withFortress', () => {
         firebase: undefined
       }
     })
-    expect(prepareFortressInspect).toBeCalledWith(['ip'])
+    expect(prepareFortressInspect).toBeCalledWith(['ip'], false)
     return config.rewrites?.().then((rule) => {
       expect(rule).toEqual({
         beforeFiles: [
@@ -59,10 +59,11 @@ describe('withFortress', () => {
         clientEmail: 'example@example.com',
         privateKey: 'private_key',
         projectId: 'project_id'
-      }
+      },
+      prepared: true
     })({})
 
-    expect(prepareFortressInspect).toBeCalledWith(['firebase'])
+    expect(prepareFortressInspect).toBeCalledWith(['firebase'], true)
     expect(config.serverRuntimeConfig).toEqual({
       forts: [
         {
