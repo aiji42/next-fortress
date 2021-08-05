@@ -89,4 +89,32 @@ describe('withFortress', () => {
       }
     })
   })
+
+  test('inspectByCustom', () => {
+    const config = withFortress({
+      forts: [
+        {
+          source: '/need/auth',
+          inspectBy: 'custom',
+          mode: 'redirect',
+          destination: '/login'
+        }
+      ]
+    })({})
+
+    expect(prepareFortressInspect).toBeCalledWith([], false)
+    expect(config.serverRuntimeConfig).toEqual({
+      forts: [
+        {
+          source: '/need/auth',
+          inspectBy: 'custom',
+          mode: 'redirect',
+          destination: '/login'
+        }
+      ],
+      fortress: {
+        host: '0.0.0.0'
+      }
+    })
+  })
 })

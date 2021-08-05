@@ -17,7 +17,9 @@ export const withFortress =
   }) =>
   (config: Partial<NextConfig>): Partial<NextConfig> => {
     prepareFortressInspect(
-      [...new Set(forts.map(({ inspectBy }) => inspectBy))].filter((inspect) => inspect !== 'custom'),
+      [...new Set(forts.map(({ inspectBy }) => inspectBy))].filter(
+        (inspect) => inspect !== 'custom'
+      ),
       prepared
     )
 
