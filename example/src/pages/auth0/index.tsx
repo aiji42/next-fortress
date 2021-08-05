@@ -19,7 +19,7 @@ const IndexPage: VFC = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Next Fortress</h1>
-        <h2>Firebase example</h2>
+        <h2>Auth0 example</h2>
 
         <p>This page can be accessed by anyone, with or without a login.</p>
         <p>My Page can be accessed only when you are logged in.</p>
