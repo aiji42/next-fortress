@@ -52,7 +52,7 @@ const withFortress = require('next-fortress')({
     privateKey: 'your private key'
   }
 })
-module.export = withFortress({})
+module.exports = withFortress({})
 `}
           </code>
         </pre>

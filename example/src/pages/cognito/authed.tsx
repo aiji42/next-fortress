@@ -51,7 +51,7 @@ const withFortress = require('next-fortress')({
     }
   ]
 })
-module.export = withFortress({})
+module.exports = withFortress({})
 `}
           </code>
         </pre>
