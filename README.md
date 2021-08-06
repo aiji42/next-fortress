@@ -251,7 +251,7 @@ const withFortress = require('next-fortress')({
 ### When Customizing the inspection method
 
 It is possible to self-define the method of inspecting requests.  
-For `prepare: true`, see [About the file for inspection](#about-the-file-for-inspection).
+For `prepared: true`, see [About the file for inspection](#about-the-file-for-inspection).
 
 ```js
 // next.config.js
@@ -262,7 +262,7 @@ const withFortress = require('next-fortress')({
       // ...controlMode
     }
   ],
-  prepare: true
+  prepared: true
 })
 ```
 
@@ -295,7 +295,7 @@ This plugin will automatically add `pages/_fortress/[__key].js` when the server 
 It is used to inspect requests and control responses based on the `forts` you set.  
 It will always be overwritten on server starts to keep up with changes in the plugin.
 
-If for some reason you want to prevent overwriting (e.g. custom processing), or if you can't create that file automatically (e.g. monorepo configuration), you can switch to manual by adding `parepare: true` to the configuration.  
+If for some reason you want to prevent overwriting (e.g. custom processing), or if you can't create that file automatically (e.g. monorepo configuration), you can switch to manual by adding `prepared: true` to the configuration.  
 ```js
 const withFortress = require('next-fortress')({
   forts: [
