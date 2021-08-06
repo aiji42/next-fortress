@@ -3,6 +3,7 @@ import { GetServerSidePropsContext } from 'next'
 export type InspectByIp = {
   inspectBy: 'ip'
   ips: string | Array<string>
+  failSafe?: boolean
 }
 
 export type InspectByFirebase = {
