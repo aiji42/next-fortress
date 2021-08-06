@@ -17,7 +17,9 @@ export const inspectIp = (
 }
 
 export const ip: Operator = async (fort, ctx) => {
-  if (fort.inspectBy !== 'ip' || !ctx.req.headers['x-forwarded-for'])
-    return false
+  if (fort.inspectBy !== 'ip') return false
+  if (!ctx.req.headers['x-forwarded-for'])
+    return !(fort.failSafe ?? process.env.NODE_ENV === 'production')
+
   return inspectIp(fort.ips, ctx.req.headers['x-forwarded-for'])
 }
