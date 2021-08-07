@@ -1,5 +1,12 @@
 const withFortress = require('next-fortress')({
   forts: [
+    // {
+    //   source: '/:path((?!.*\\.\\w{2,4}$).+)', // Non static files
+    //   inspectBy: 'ip',
+    //   mode: 'block',
+    //   ips: ["14.11.11.224"],
+    //   failSafe: true
+    // },
     {
       source: '/foo/redirect',
       inspectBy: 'ip',
