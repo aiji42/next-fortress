@@ -6,7 +6,7 @@ jest.mock('../prepare-fortress-inspect', () => ({
 }))
 
 describe('withFortress', () => {
-  test('default', () => {
+  test('default', async () => {
     const config = withFortress({
       forts: [
         {
@@ -26,7 +26,7 @@ describe('withFortress', () => {
       }
     })
     expect(prepareFortressInspect).toBeCalledWith(['ip'], false)
-    return config.rewrites?.().then((rule) => {
+    await config.rewrites?.().then((rule) => {
       expect(rule).toEqual({
         beforeFiles: [
           {
