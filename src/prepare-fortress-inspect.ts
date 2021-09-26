@@ -49,7 +49,7 @@ export const prepareFortressInspect = (
   try {
     dir = `${findPagesDir('')}/_fortress`
   } catch (e) {
-    console.error(e.message)
+    if (e instanceof Error) console.error(e.message)
     console.log(suggestMessage(modules))
     process.exit(1)
     return
