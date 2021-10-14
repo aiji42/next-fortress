@@ -1,4 +1,4 @@
-import { NextConfig } from 'next/dist/next-server/server/config-shared'
+import { NextConfig } from 'next/dist/server/config'
 import { prepareFortressInspect } from './prepare-fortress-inspect'
 import { makeRewrites } from './make-rewrites'
 import { Fort, FortressFirebaseCredential } from './types'
@@ -15,7 +15,7 @@ export const withFortress =
     firebase?: FortressFirebaseCredential
     prepared?: boolean
   }) =>
-  (config: Partial<NextConfig>): Partial<NextConfig> => {
+  (config: NextConfig): NextConfig => {
     prepareFortressInspect(
       [...new Set(forts.map(({ inspectBy }) => inspectBy))].filter(
         (inspect) => inspect !== 'custom'
