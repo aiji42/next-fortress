@@ -67,7 +67,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "firebase-admin": "^9.12.0",
+    "firebase-admin": "^10.0.0",
     "ip-cidr": "^3.0.4",
     "nookies": "^2.5.2"
   }
