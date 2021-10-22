@@ -1,10 +1,9 @@
 import { makeFirebaseInspector } from 'next-fortress'
-import { NextRequest } from 'next/server'
 
-export const middleware = async (req: NextRequest) => {
-  if (!req.nextUrl.pathname.includes('authed')) return
-
-  return makeFirebaseInspector({ type: 'redirect', destination: '/firebase' })(
-    req
-  )
-}
+export const middleware = makeFirebaseInspector(
+  {
+    type: 'redirect',
+    destination: '/firebase'
+  },
+  (res) => res.firebase.sign_in_provider !== 'anonymous'
+)

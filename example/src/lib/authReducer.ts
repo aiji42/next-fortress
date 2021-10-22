@@ -5,6 +5,7 @@ const reducer = (state: any, action: any) => {
     case 'login':
       return action.payload.user
     case 'logout':
+      document.location.replace('/firebase')
       return initialState
     default:
       return state
