@@ -1,5 +1,5 @@
 import { Fallback, Middleware } from './types'
-import ipCidr from 'ip-cidr'
+import { Netmask } from 'netmask'
 import { NextRequest } from 'next/server'
 import { handleFallback } from './handle-fallback'
 
@@ -17,13 +17,9 @@ export const makeIPInspector = (
 }
 
 const inspectIp = (ips: IPs, target: NextRequest['ip']): boolean => {
+  if (!target) return false
   return (Array.isArray(ips) ? ips : [ips]).some((ip) => {
-    if (!ipCidr.isValidAddress(ip)) return false
-    const ipAddress = ipCidr.createAddress(ip)
-    return new ipCidr(
-      `${ipAddress.addressMinusSuffix}${ipAddress.subnet}`
-    ).contains(
-      Array.isArray(target) ? target[0] : target ? target.split(',')[0] : target
-    )
+    const block = new Netmask(ip)
+    return block.contains(target)
   })
 }
