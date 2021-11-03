@@ -4,7 +4,6 @@ import AuthContext from '../lib/AuthContext'
 import authReducer from '../lib/authReducer'
 import { listenAuthState } from '../lib/firebase'
 import { useEffect, useReducer } from 'react'
-import { useFortressWithFirebase } from 'next-fortress/build/client'
 import firebase from 'firebase/app'
 import 'prismjs/themes/prism-tomorrow.css'
 import '../styles/globals.css'
@@ -39,7 +38,6 @@ Amplify.configure({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
-  useFortressWithFirebase(firebase)
   const [state, dispatch] = useReducer(
     authReducer.reducer,
     authReducer.initialState

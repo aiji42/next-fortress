@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import { FIREBASE_COOKIE_KEY } from 'next-fortress/build/constants'
 
 export const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -36,6 +37,12 @@ export const listenAuthState = (dispatch: any) => {
   return firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       // User is signed in.
+      user
+        .getIdToken()
+        .then(
+          (token) =>
+            (document.cookie = `${FIREBASE_COOKIE_KEY}=${token}; path=/`)
+        )
       dispatch({
         type: 'login',
         payload: {
@@ -44,7 +51,9 @@ export const listenAuthState = (dispatch: any) => {
       })
     } else {
       // User is signed out.
-      // ...
+      document.cookie = `${FIREBASE_COOKIE_KEY}=; path=/; expires=${new Date(
+        '1999-12-31T23:59:59Z'
+      ).toUTCString()}`
       dispatch({
         type: 'logout'
       })
