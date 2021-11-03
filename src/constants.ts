@@ -1,1 +1,1 @@
-export const FIREBASE_COOKIE_KEY = '__fortressFirebase'
+export const FIREBASE_COOKIE_KEY = '__fortressFirebaseSession'

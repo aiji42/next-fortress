@@ -1,11 +1,22 @@
-import { GetServerSidePropsContext } from 'next'
 import { withSSRContext } from 'aws-amplify'
-import { Operator } from './types'
+import { AsyncMiddleware, Fallback } from './types'
+import { NextRequest } from 'next/server'
+import { handleFallback } from './handle-fallback'
 
-export const verifyCognitoAuthenticatedUser = async (
-  ctx: GetServerSidePropsContext
+export const makeCognitoInspector = (fallback: Fallback): AsyncMiddleware => {
+  return async (request, event) => {
+    const ok = await verifyCognitoAuthenticatedUser(request)
+    if (ok) return
+    return handleFallback(fallback, request, event)
+  }
+}
+
+const verifyCognitoAuthenticatedUser = async (
+  req: NextRequest
 ): Promise<boolean> => {
-  const { Auth } = withSSRContext(ctx)
+  const { Auth } = withSSRContext({
+    req: { headers: { cookie: req.headers.get('cookie') } }
+  })
   let authenticated: boolean
   try {
     const user = await Auth.currentAuthenticatedUser()
@@ -15,9 +26,4 @@ export const verifyCognitoAuthenticatedUser = async (
   }
 
   return authenticated
-}
-
-export const cognito: Operator = async (fort, ctx) => {
-  if (fort.inspectBy !== 'cognito') return false
-  return verifyCognitoAuthenticatedUser(ctx)
 }

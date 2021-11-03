@@ -1,38 +1,28 @@
-import * as firebaseAdmin from 'firebase-admin'
-import { GetServerSidePropsContext } from 'next'
-import nookies from 'nookies'
-import getConfig from 'next/config'
-import { FortressFirebaseCredential, Operator } from './types'
+import { Auth } from 'firebase-admin/lib/auth'
+import { AsyncMiddleware, Fallback } from './types'
 import { FIREBASE_COOKIE_KEY } from './constants'
+import { NextRequest } from 'next/server'
+import { handleFallback } from './handle-fallback'
 
-const { serverRuntimeConfig } = getConfig()
-
-if (!firebaseAdmin.apps.length && serverRuntimeConfig.fortress?.firebase) {
-  const { clientEmail, projectId, privateKey }: FortressFirebaseCredential =
-    serverRuntimeConfig.fortress.firebase
-  firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert({
-      clientEmail,
-      projectId,
-      privateKey: privateKey.replace(/\\n/g, '\n')
-    })
-  })
+export const makeFirebaseInspector = (
+  auth: Auth,
+  fallback: Fallback
+): AsyncMiddleware => {
+  return async (request, event) => {
+    const ok = await verifyFirebaseIdToken(auth, request)
+    if (ok) return
+    return handleFallback(fallback, request, event)
+  }
 }
 
-export const verifyFirebaseIdToken = async (
-  ctx: GetServerSidePropsContext
+const verifyFirebaseIdToken = async (
+  auth: Auth,
+  req: NextRequest
 ): Promise<boolean> => {
-  const cookies = nookies.get(ctx)
-  const token = cookies[FIREBASE_COOKIE_KEY]
+  const token = req.cookies[FIREBASE_COOKIE_KEY]
   if (!token) return false
-  return firebaseAdmin
-    .auth()
-    .verifyIdToken(token)
+  return auth
+    .verifyIdToken(token, true)
     .then(() => true)
     .catch(() => false)
-}
-
-export const firebase: Operator = async (fort, ctx) => {
-  if (fort.inspectBy !== 'firebase') return false
-  return verifyFirebaseIdToken(ctx)
 }
