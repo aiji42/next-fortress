@@ -2,8 +2,9 @@
   "name": "next-fortress",
   "version": "0.0.0-development",
   "description": "This is a Next.js plugin that blocks, redirects, or displays a dummy page for accesses that are not authenticated.",
-  "main": "./build/index.js",
+  "module": "./build/index.js",
   "types": "./build/index.d.ts",
+  "type": "module",
   "files": [
     "build"
   ],
@@ -27,15 +28,15 @@
     "format": "prettier --write src/*.ts src/**/*.ts example/src/*",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "build": "tsc && ts-add-module-exports",
+    "build": "tsc",
     "prepare": "husky install",
     "semantic-release": "semantic-release"
   },
   "peerDependencies": {
     "@auth0/nextjs-auth0": ">=1.0.0",
     "aws-amplify": ">=3.0.0",
-    "firebase": ">=7.8.0",
-    "next": ">=10.2.0",
+    "firebase-admin": ">=9.0.0",
+    "next": ">=12.0.0",
     "react": ">=17.0.0"
   },
   "devDependencies": {
@@ -54,21 +55,17 @@
     "babel-jest": "^27.3.1",
     "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
-    "firebase": "^8.10.0",
+    "firebase-admin": "^10.0.0",
     "husky": "^7.0.4",
     "jest": "^27.3.1",
     "next": "^12.0.2",
     "prettier": "^2.4.1",
-    "react": "^17.0.2",
     "semantic-release": "^18.0.0",
     "semantic-release-cli": "^5.4.4",
-    "ts-add-module-exports": "^1.0.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "firebase-admin": "^10.0.0",
-    "ip-cidr": "^3.0.4",
-    "nookies": "^2.5.2"
+    "ip-cidr": "^3.0.4"
   }
 }
