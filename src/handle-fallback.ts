@@ -9,6 +9,6 @@ export const handleFallback = (
   if (typeof fallback === 'function') return fallback(request, event)
   if (fallback.type === 'rewrite')
     return NextResponse.rewrite(fallback.destination)
-  if (fallback.type === 'redirect')
-    return NextResponse.redirect(fallback.destination, fallback.statusCode)
+
+  return NextResponse.redirect(fallback.destination, fallback.statusCode)
 }

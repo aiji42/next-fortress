@@ -15,5 +15,5 @@ const verifyAuth0Session = async (req: NextRequest): Promise<boolean> => {
   // const session = await getSession(req, res)
   //
   // return !!session
-  return !req
+  return !!req
 }
