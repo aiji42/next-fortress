@@ -1,6 +1,8 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { FIREBASE_COOKIE_KEY } from 'next-fortress/build/constants'
+// import { FIREBASE_COOKIE_KEY } from 'next-fortress/build/constants'
+
+const FIREBASE_COOKIE_KEY = '__fortressFirebaseSession'
 
 export const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
