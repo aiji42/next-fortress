@@ -1,4 +1,4 @@
 export default {
-  testPathIgnorePatterns: ["<rootDir>/build/"],
-  collectCoverageFrom: ["src/**/*.{ts,js,tsx}"]
+  testPathIgnorePatterns: ['<rootDir>/dist/'],
+  collectCoverageFrom: ['src/**/*.{ts,js,tsx}']
 }
