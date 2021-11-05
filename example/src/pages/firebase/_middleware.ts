@@ -1,14 +1,14 @@
 // import { makeFirebaseInspector } from 'next-fortress/build/firebase'
 // import { FIREBASE_COOKIE_KEY } from 'next-fortress/build/constants'
 import { NextRequest, NextResponse } from 'next/server'
-import { verify, decode } from 'jsonwebtoken'
+import { decodeProtectedHeader, jwtVerify, JWK, importJWK } from 'jose'
 
 const FIREBASE_COOKIE_KEY = '__fortressFirebaseSession'
 
 let cache: {
   expire: null | Date
-  keys: Record<string, string>
-} = { expire: null, keys: {} }
+  keys: JWK[]
+} = { expire: null, keys: [] }
 
 export const middleware = async (req: NextRequest) => {
   if (!req.nextUrl.pathname.includes('authed')) return
@@ -17,19 +17,23 @@ export const middleware = async (req: NextRequest) => {
   if (!token) return NextResponse.redirect('/firebase')
 
   if (!cache.expire || new Date() > cache.expire || !Object.keys(cache.keys)) {
-    cache.keys = await fetch(
-      'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com'
-    ).then((res) => {
-      cache.expire = new Date(res.headers.get('expires') ?? '')
-      return res.json()
-    })
+    cache.keys = (
+      await fetch(
+        'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'
+      ).then((res) => {
+        cache.expire = new Date(res.headers.get('expires') ?? '')
+        return res.json()
+      })
+    ).keys
   } else {
     console.log(`You have public key cache. Expire: ${cache.expire}`)
   }
 
-  const kid = decode(token, { complete: true })?.header.kid ?? ''
+  const kid = decodeProtectedHeader(token).kid ?? ''
+  const jwk = cache.keys.find((key) => key.kid === kid)
+  if (!jwk) return NextResponse.redirect('/firebase')
   try {
-    verify(token, cache.keys[kid])
+    await jwtVerify(token, await importJWK(jwk))
   } catch (_) {
     return NextResponse.redirect('/firebase')
   }

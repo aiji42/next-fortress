@@ -1,13 +1,12 @@
 // import { makeFirebaseInspector } from 'next-fortress/build/firebase'
 import { NextRequest, NextResponse } from 'next/server'
-import { verify, decode } from 'jsonwebtoken'
-import jwkToPem, { JWK } from 'jwk-to-pem'
+import { decodeProtectedHeader, jwtVerify, importJWK, JWK } from 'jose'
 
 const region = process.env.NEXT_PUBLIC_COGNITO_REGION
 const poolId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID
 
 let cache: {
-  keys: (JWK & { kid: string })[]
+  keys: JWK[]
 } = { keys: [] }
 
 export const middleware = async (req: NextRequest) => {
@@ -30,12 +29,12 @@ export const middleware = async (req: NextRequest) => {
     console.log(`You have public key cache.`)
   }
 
-  const kid = decode(token, { complete: true })?.header.kid ?? ''
+  const kid = decodeProtectedHeader(token).kid ?? ''
   const jwk = cache.keys.find((key) => key.kid === kid)
   if (!jwk) return NextResponse.redirect('/cognito')
 
   try {
-    verify(token, jwkToPem(jwk))
+    await jwtVerify(token, await importJWK(jwk))
   } catch (_) {
     return NextResponse.redirect('/cognito')
   }
