@@ -64,14 +64,15 @@ import { NextRequest } from 'next/server'
 
 export const middleware = async (req: NextRequest) => {
   // type makeFirebaseInspector = (fallback: Fallback) => AsyncMiddleware;
-  return makeFirebaseInspector({ type: 'redirect', destination: '/signin' })(
-    req
-  )
+  return makeFirebaseInspector(
+    { type: 'redirect', destination: '/signin' }
+  )(req)
 }
 ```
 
 Put the firebase user token into the cookie using the following example.
 ```ts
+// cient side code (for example /pages/_app.tsx)
 import { FIREBASE_COOKIE_KEY } from 'next-fortress/dist/constants'
 
 firebase.auth().onAuthStateChanged(function (user) {
@@ -112,6 +113,7 @@ export const middleware = async (req: NextRequest) => {
 
 Add `ssr: true` option to `Amplify.configure` to handle Cognito cookies on the edge.
 ```ts
+// cient side code (for example /pages/_app.tsx)
 import Amplify from 'aws-amplify'
 
 Amplify.configure({
