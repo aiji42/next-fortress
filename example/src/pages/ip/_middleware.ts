@@ -1,9 +1,13 @@
 import { makeIPInspector } from 'next-fortress'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export const middleware = (req: NextRequest) => {
-  return makeIPInspector('14.11.11.224/32', {
+  if (req.nextUrl.pathname === '/ip') return
+  const ips = req.cookies['__allowed_ips']
+  if (!ips) return NextResponse.redirect('/ip')
+
+  return makeIPInspector(ips.split(','), {
     type: 'redirect',
-    destination: '/'
+    destination: '/ip'
   })(req)
 }

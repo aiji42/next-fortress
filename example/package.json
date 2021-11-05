@@ -10,16 +10,18 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^1.6.1",
+    "@geist-ui/react": "^2.2.0",
+    "@geist-ui/react-icons": "^1.0.1",
     "aws-amplify": "^4.3.4",
     "firebase": "^8.8.1",
+    "js-cookie": "^3.0.1",
     "next": "12.0.2",
     "next-fortress": "^3.0.0-beta.1",
-    "prismjs": "^1.25.0",
     "react": "^17.0.2",
     "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "@types/prismjs": "^1.16.6",
+    "@types/js-cookie": "^3.0.0",
     "@types/react": "17.0.33",
     "eslint": "8.1.0",
     "eslint-config-next": "12.0.2",

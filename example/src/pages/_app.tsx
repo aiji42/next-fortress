@@ -1,4 +1,3 @@
-import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import AuthContext from '../lib/AuthContext'
 import authReducer from '../lib/authReducer'
@@ -8,6 +7,16 @@ import 'prismjs/themes/prism-tomorrow.css'
 import '../styles/globals.css'
 import Amplify from 'aws-amplify'
 import { UserProvider } from '@auth0/nextjs-auth0'
+import {
+  GeistProvider,
+  CssBaseline,
+  Page,
+  Text,
+  Link,
+  Grid
+} from '@geist-ui/react'
+import Image from 'next/image'
+import Github from '@geist-ui/react-icons/github'
 
 Amplify.configure({
   aws_cognito_identity_pool_id:
@@ -48,7 +57,54 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <UserProvider>
       <AuthContext.Provider value={state}>
-        <Component {...pageProps} />
+        <GeistProvider>
+          <CssBaseline />
+          <Page width="800px" padding={0}>
+            <Page.Header>
+              <Grid.Container gap={2} justify="space-between">
+                <Grid xs={18}>
+                  <Text h1 font="32px" paddingLeft={1} paddingTop={1}>
+                    <Link href="/">🏯 Next Fortress</Link>
+                  </Text>
+                </Grid>
+                <Grid>
+                  <Text font="32px" marginTop={1.3} paddingRight={2}>
+                    <Link href="https://github.com/aiji42/next-fortress">
+                      <Github size={36} />
+                    </Link>
+                  </Text>
+                </Grid>
+              </Grid.Container>
+            </Page.Header>
+
+            <Page.Content padding={1}>
+              <Component {...pageProps} />
+            </Page.Content>
+
+            <Page.Footer>
+              <Grid.Container justify="center">
+                <Grid xs={24} height="50px">
+                  <div style={{ textAlign: 'center', width: '100%' }}>
+                    <a
+                      href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'black' }}
+                    >
+                      Powered by{' '}
+                      <Image
+                        src="/vercel.svg"
+                        alt="Vercel Logo"
+                        width={72}
+                        height={16}
+                      />
+                    </a>
+                  </div>
+                </Grid>
+              </Grid.Container>
+            </Page.Footer>
+          </Page>
+        </GeistProvider>
       </AuthContext.Provider>
     </UserProvider>
   )
