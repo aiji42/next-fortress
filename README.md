@@ -80,15 +80,12 @@ firebase.auth().onAuthStateChanged(function (user) {
     // User is signed in.
     user
       .getIdToken()
-      .then(
-        (token) =>
-          (document.cookie = `${FIREBASE_COOKIE_KEY}=${token}; path=/`)
-      )
+      .then((token) => document.cookie = `${FIREBASE_COOKIE_KEY}=${token}; path=/`)
   } else {
     // User is signed out.
-    document.cookie = `${FIREBASE_COOKIE_KEY}=; path=/; expires=${new Date(
-      '1999-12-31T23:59:59Z'
-    ).toUTCString()}`
+    document.cookie = `${FIREBASE_COOKIE_KEY}=; path=/; expires=${
+      new Date('1999-12-31T23:59:59Z').toUTCString()
+    }`
   }
 })
 ```
