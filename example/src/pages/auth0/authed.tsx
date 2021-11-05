@@ -1,14 +1,11 @@
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
-import { useEffect, VFC } from 'react'
-import Prism from 'prismjs'
+import { VFC } from 'react'
+
 import { useUser } from '@auth0/nextjs-auth0'
 import { Text } from '@geist-ui/react'
 
 const Authed: VFC = () => {
-  useEffect(() => {
-    Prism.highlightAll()
-  }, [])
   const { user } = useUser()
   return (
     <>
