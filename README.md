@@ -13,7 +13,7 @@ This plugin uses Next.js v12 middleware to control access with edge functions, w
 
 - Using Next.js >=12
 
-This plugin depends on the middleware of Next.js v12. If you are using Next.js v11 or earlier, please use next-with-split [v2](https://www.npmjs.com/package/next-fortress/v/2.2.2).
+This plugin depends on the middleware of Next.js v12. If you are using Next.js v11 or earlier, please use [next-fortress v2](https://www.npmjs.com/package/next-fortress/v/2.2.2).
 
 ## Installation
 
