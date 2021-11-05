@@ -1,19 +1,25 @@
-// import { getSession } from '@auth0/nextjs-auth0'
 import { AsyncMiddleware, Fallback } from './types'
 import { NextRequest } from 'next/server'
 import { handleFallback } from './handle-fallback'
 
-export const makeAuth0Inspector = (fallback: Fallback): AsyncMiddleware => {
+export const makeAuth0Inspector = (
+  fallback: Fallback,
+  apiEndpoint: string
+): AsyncMiddleware => {
   return async (request, event) => {
-    const ok = await verifyAuth0Session(request)
+    const ok = await verifyAuth0Session(request, apiEndpoint)
     if (ok) return
     return handleFallback(fallback, request, event)
   }
 }
 
-const verifyAuth0Session = async (req: NextRequest): Promise<boolean> => {
-  // const session = await getSession(req, res)
-  //
-  // return !!session
-  return !!req
+const verifyAuth0Session = async (
+  req: NextRequest,
+  apiEndpoint: string
+): Promise<boolean> => {
+  const res = await fetch(apiEndpoint, {
+    headers: { cookie: req.headers.get('cookie') ?? '' }
+  })
+
+  return res.ok
 }
