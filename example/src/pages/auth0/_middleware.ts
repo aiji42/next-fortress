@@ -1,12 +1,11 @@
-// import { makeAuth0Inspector } from 'next-fortress/build/auth0'
-import { NextRequest, NextResponse } from 'next/server'
+import { makeAuth0Inspector } from 'next-fortress'
+import { NextRequest } from 'next/server'
 
 export const middleware = async (req: NextRequest) => {
-  if (req.nextUrl.pathname !== '/auth0/authed') return
+  if (!req.nextUrl.pathname.includes('authed')) return
 
-  const res = await fetch('/api/auth/me', {
-    headers: { cookie: req.headers.get('cookie') ?? '' }
-  })
-
-  if (!res.ok) return NextResponse.redirect('/auth0')
+  return makeAuth0Inspector(
+    { type: 'redirect', destination: '/auth0' },
+    '/api/auth/me'
+  )(req)
 }
