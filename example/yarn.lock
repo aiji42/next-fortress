@@ -4412,10 +4412,10 @@ jose@^2.0.5:
   dependencies:
     "@panva/asn1.js" "^1.0.0"
 
-jose@^4.1.4:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-4.1.4.tgz#0ed1229b3a1d1f90c255fd4777c746f8b2f12b65"
-  integrity sha512-iCCOrCZuG+BjP3SsjTmJtgFZey1hwHMUqv9nBqFkdJtJ/jd193QgCl/u339IdyS+2opUklON+9VzGzmKaudsfg==
+jose@^4.1.5:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-4.1.5.tgz#fc681f89b9fee618eebe579a493fed46db78d990"
+  integrity sha512-GGTo/8TUgKsLrohNRwFzkJ+dI/TzFNknPO4hPbzc3lUi01mDmqlrvKDTzHxT6ESZKBMWNfiffQ755T5SiUJuxQ==
 
 js-cookie@^2.2.1:
   version "2.2.1"
@@ -4717,12 +4717,12 @@ netmask@^2.0.2:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.0.2.tgz#8b01a07644065d536383835823bc52004ebac5e7"
   integrity sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==
 
-next-fortress@^3.0.0-beta.1:
-  version "3.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-3.0.0-beta.1.tgz#0cb7c8dd5e9ad11daf0ad8b7492af9c9b39cbdb0"
-  integrity sha512-qmksxucgFdRbUZrsKmVoD0JpmQ0cyw8OSYCotwwu3xNn5sVafrDJjR747p5MX39CpccSlt4EdRV5Fn9cxkjtdQ==
+next-fortress@^3.0.0-beta.2:
+  version "3.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-3.0.0-beta.2.tgz#ef8f750458ba733665f10a6e834d13f6a8b7f1fe"
+  integrity sha512-Uvk242Kg8ZH+YiuuZnHA7xACu+Ugkr6IzPYEdVrJLttjhdP0+S38Fu7mbQPOMHUOVltllQWe8LsOG71f3fcanA==
   dependencies:
-    jose "^4.1.4"
+    jose "^4.1.5"
     netmask "^2.0.2"
 
 next@12.0.3:
