@@ -5,7 +5,7 @@
 
 This package is a Next.js plugin that provides server-side access control for users when they are in a non-authenticated state.
 
-IPs, Firebase, Cognito and Auth0 are used to determine authentication, and when a user is in a non-authenticated state, it is possible to redirect or rewrite.
+IPs, Firebase, Amazon Cognito and Auth0 are used to determine authentication, and when a user is in a non-authenticated state, it is possible to redirect or rewrite.
 
 This plugin uses Next.js v12 middleware to control access with edge functions, which makes it faster and reduces client-side code.
 
@@ -55,7 +55,7 @@ export const middleware = (req: NextRequest) => {
 }
 ```
 
-### Control by firebase
+### Control by Firebase
 
 ```ts
 // /pages/mypage/_middleware.ts
@@ -70,7 +70,7 @@ export const middleware = async (req: NextRequest) => {
 }
 ```
 
-Put the firebase user token into the cookie using the following example.
+Put the Firebase user token into the cookie using the following example.
 ```ts
 // cient side code (for example /pages/_app.tsx)
 import { FIREBASE_COOKIE_KEY } from 'next-fortress/dist/constants'
@@ -90,7 +90,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 })
 ```
 
-### Control by Cognito (Amplify)
+### Control by Amazon Cognito
 
 ```ts
 // /pages/mypage/_middleware.ts
@@ -108,7 +108,7 @@ export const middleware = async (req: NextRequest) => {
 }
 ```
 
-Add `ssr: true` option to `Amplify.configure` to handle Cognito cookies on the edge.
+Add `ssr: true` option to `Amplify.configure` to handle the Cognito cookies on the edge.
 ```ts
 // cient side code (for example /pages/_app.tsx)
 import Amplify from 'aws-amplify'
