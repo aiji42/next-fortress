@@ -2,7 +2,6 @@ import { login, logout, auth } from '../../lib/firebase'
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
 import { VFC } from 'react'
-import Link from 'next/link'
 import { Text } from '@geist-ui/react'
 
 const IndexPage: VFC = () => {
