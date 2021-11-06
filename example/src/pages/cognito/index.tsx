@@ -15,11 +15,11 @@ const IndexPage: VFC = () => {
   return (
     <>
       <Head>
-        <title>Cognito Example | Next Fortress</title>
+        <title>Amazon Cognito Example | Next Fortress</title>
       </Head>
 
       <Text h2 font="24px">
-        Cognito example
+        Amazon Cognito example
       </Text>
 
       <p>This page can be accessed by anyone, with or without a login.</p>
@@ -41,7 +41,7 @@ const IndexPage: VFC = () => {
           </button>
         )}
 
-        <Link href="/cognito/authed">
+        <Link href="/cognito/authed" prefetch={false}>
           <div className={styles.card}>
             <h2>Go My Page &rarr;</h2>
             {!login && <p>(Not Allowed)</p>}

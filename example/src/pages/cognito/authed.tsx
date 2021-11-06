@@ -14,11 +14,11 @@ const Authed: VFC = () => {
   return (
     <>
       <Head>
-        <title>My Page | Cognito Example | Next Fortress</title>
+        <title>My Page | Amazon Cognito Example | Next Fortress</title>
       </Head>
 
       <Text h2 font="24px">
-        My Page | Cognito Example
+        My Page | Amazon Cognito Example
       </Text>
 
       <p>

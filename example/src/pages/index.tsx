@@ -18,13 +18,13 @@ export default function Home() {
 
         <Link href="/firebase">
           <div className={styles.card}>
-            <h2>firebase &rarr;</h2>
+            <h2>Firebase &rarr;</h2>
           </div>
         </Link>
 
         <Link href="/cognito">
           <div className={styles.card}>
-            <h2>Cognito &rarr;</h2>
+            <h2>Amazon Cognito &rarr;</h2>
           </div>
         </Link>
 

@@ -43,7 +43,7 @@ const IndexPage: VFC = () => {
       </p>
 
       <Spacer h={1} />
-      <NextLink href="/ip/admin">
+      <NextLink href="/ip/admin" prefetch={false}>
         <Link block scale={2}>
           Go to admin page
         </Link>

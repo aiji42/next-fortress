@@ -1,4 +1,4 @@
-import { Logout, auth } from '../../lib/firebase'
+import { logout, auth } from '../../lib/firebase'
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
 import { VFC } from 'react'
@@ -21,7 +21,7 @@ const Authed: VFC = () => {
       <p>This page is accessible only to logged-in users.</p>
 
       <div className={styles.grid}>
-        <button className={styles.card} onClick={Logout}>
+        <button className={styles.card} onClick={logout}>
           <h2>Logout</h2>
         </button>
       </div>

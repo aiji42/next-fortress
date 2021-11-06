@@ -22,7 +22,7 @@ const IndexPage: VFC = () => {
 
       <div className={styles.grid}>
         {!user ? (
-          <a href="/api/auth/login" className={styles.card}>
+          <a href="/api/auth/login?returnTo=/auth0" className={styles.card}>
             <h2>Login</h2>
             <p>You are Not logged in.</p>
           </a>
@@ -33,7 +33,7 @@ const IndexPage: VFC = () => {
           </a>
         )}
 
-        <Link href="/auth0/authed">
+        <Link href="/auth0/authed" prefetch={false}>
           <div className={styles.card}>
             <h2>Go My Page &rarr;</h2>
             {!user && <p>(Not Allowed)</p>}

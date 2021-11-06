@@ -1,4 +1,4 @@
-import { Login, Logout, auth } from '../../lib/firebase'
+import { login, logout, auth } from '../../lib/firebase'
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
 import { VFC } from 'react'
@@ -21,23 +21,21 @@ const IndexPage: VFC = () => {
 
       <div className={styles.grid}>
         {!auth.currentUser ? (
-          <button className={styles.card} onClick={() => Login()}>
+          <button className={styles.card} onClick={login}>
             <h2>Login</h2>
             <p>You are Not logged in.</p>
           </button>
         ) : (
-          <button className={styles.card} onClick={() => Logout()}>
+          <button className={styles.card} onClick={logout}>
             <h2>Logout</h2>
             <p>You are logged in.</p>
           </button>
         )}
 
-        <Link href="/firebase/authed">
-          <div className={styles.card}>
-            <h2>Go My Page &rarr;</h2>
-            {!auth.currentUser && <p>(Not Allowed)</p>}
-          </div>
-        </Link>
+        <a href="/firebase/authed" className={styles.card}>
+          <h2>Go My Page &rarr;</h2>
+          {!auth.currentUser && <p>(Not Allowed)</p>}
+        </a>
       </div>
     </>
   )
