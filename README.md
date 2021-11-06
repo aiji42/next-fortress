@@ -9,6 +9,10 @@ IPs, Firebase, Amazon Cognito and Auth0 are used to determine authentication, an
 
 This plugin uses Next.js v12 middleware to control access with edge functions, which makes it faster and reduces client-side code.
 
+## Example
+
+[next-fortress example](https://next-fortress.vercel.app)
+
 ## Require
 
 - Using Next.js >=12
@@ -39,6 +43,8 @@ type Middleware = (request: NextRequest, event?: NextFetchEvent) => Response | u
 
 ### Control by IP address
 
+[example](https://next-fortress.vercel.app/ip)
+
 ```ts
 // /pages/admin/_middleware.ts
 import { makeIPInspector } from 'next-fortress'
@@ -56,6 +62,9 @@ export const middleware = (req: NextRequest) => {
 ```
 
 ### Control by Firebase
+
+[example](https://next-fortress.vercel.app/firebase)
+
 
 ```ts
 // /pages/mypage/_middleware.ts
@@ -92,6 +101,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 ### Control by Amazon Cognito
 
+[example](https://next-fortress.vercel.app/cognito)
+
 ```ts
 // /pages/mypage/_middleware.ts
 import { makeCognitoInspector } from 'next-fortress'
@@ -121,6 +132,8 @@ Amplify.configure({
 ```
 
 ### Control by Auth0
+
+[example](https://next-fortress.vercel.app/auth0)
 
 ```ts
 // /pages/mypage/_middleware.ts
