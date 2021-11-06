@@ -12,7 +12,7 @@ export default function Home() {
       <div className={styles.grid}>
         <Link href="/ip">
           <div className={styles.card}>
-            <h2>IP Protection &rarr;</h2>
+            <h2>IP Protect &rarr;</h2>
           </div>
         </Link>
 

@@ -25,7 +25,6 @@ const Authed: VFC = () => {
       <div className={styles.grid}>
         <a href="/api/auth/logout" className={styles.card}>
           <h2>Logout</h2>
-          <p>You will be redirected to the page you were on.</p>
         </a>
       </div>
     </>

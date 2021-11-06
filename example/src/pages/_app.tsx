@@ -68,15 +68,19 @@ function MyApp({ Component, pageProps }: AppProps) {
                 </Grid>
                 <Grid>
                   <Text font="32px" marginTop={1.3} paddingRight={2}>
-                    <Link href="https://github.com/aiji42/next-fortress">
-                      <Github size={36} />
+                    <Link
+                      href="https://github.com/aiji42/next-fortress"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Github size={32} />
                     </Link>
                   </Text>
                 </Grid>
               </Grid.Container>
             </Page.Header>
 
-            <Page.Content padding={1}>
+            <Page.Content padding={1} paddingTop={0}>
               <Component {...pageProps} />
             </Page.Content>
 

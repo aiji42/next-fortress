@@ -17,7 +17,7 @@ const IndexPage: VFC = () => {
       </Text>
 
       <p>This page can be accessed by anyone, with or without a login.</p>
-      <p>My Page can be accessed only when you are logged in.</p>
+      <p>You can access My Page only when you are logged in.</p>
 
       <div className={styles.grid}>
         {!auth.currentUser ? (
@@ -35,7 +35,7 @@ const IndexPage: VFC = () => {
         <Link href="/firebase/authed">
           <div className={styles.card}>
             <h2>Go My Page &rarr;</h2>
-            <p>Try it!</p>
+            {!auth.currentUser && <p>(Not Allowed)</p>}
           </div>
         </Link>
       </div>

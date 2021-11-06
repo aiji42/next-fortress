@@ -29,7 +29,6 @@ const Authed: VFC = () => {
       <div className={styles.grid}>
         <button className={styles.card} onClick={() => Auth.signOut()}>
           <h2>Logout</h2>
-          <p>You will be redirected to the page you were on.</p>
         </button>
       </div>
     </>

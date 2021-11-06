@@ -21,9 +21,8 @@ const Authed: VFC = () => {
       <p>This page is accessible only to logged-in users.</p>
 
       <div className={styles.grid}>
-        <button className={styles.card} onClick={() => Logout()}>
+        <button className={styles.card} onClick={Logout}>
           <h2>Logout</h2>
-          <p>You will be redirected to the page you were on.</p>
         </button>
       </div>
     </>
