@@ -1,83 +1,120 @@
-import { verifyFirebaseIdToken, firebase } from '../firebase'
-import nookies from 'nookies'
-import * as firebaseAdmin from 'firebase-admin'
-import { Fort } from '../types'
-import { GetServerSidePropsContext } from 'next'
+import { makeFirebaseInspector } from '../firebase'
+import { NextRequest } from 'next/server'
+import { handleFallback } from '../handle-fallback'
+import { Fallback } from '../types'
+import fetchMock from 'fetch-mock'
+import { decodeProtectedHeader, jwtVerify } from 'jose'
 
-jest.mock('next/config', () => () => ({
-  serverRuntimeConfig: {
-    fortress: {
-      firebase: {
-        clientEmail: '',
-        projectId: '',
-        privateKey: ''
-      }
+jest.mock('jose', () => ({
+  importJWK: jest.fn(),
+  decodeProtectedHeader: jest.fn(),
+  jwtVerify: jest.fn()
+}))
+
+fetchMock.get(
+  'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com',
+  {
+    status: 200,
+    body: {
+      keys: [
+        {
+          kid: 'kid1',
+          n: 'n2',
+          kty: 'RSA',
+          use: 'sig',
+          e: 'AQAB',
+          alg: 'RS256'
+        },
+        {
+          kid: 'kid2',
+          n: 'n2',
+          kty: 'RSA',
+          use: 'sig',
+          e: 'AQAB',
+          alg: 'RS256'
+        }
+      ]
     }
   }
-}))
-jest.mock('nookies', () => ({
-  get: jest.fn()
-}))
-jest.mock('firebase-admin', () => ({
-  apps: [],
-  initializeApp: jest.fn(),
-  credential: { cert: jest.fn() },
-  auth: jest.fn()
+)
+
+jest.mock('../handle-fallback', () => ({
+  handleFallback: jest.fn()
 }))
 
-describe('firebase', () => {
-  ;(firebaseAdmin.credential.cert as jest.Mock).mockReturnValue(null)
-  describe('verifyFirebaseIdToken', () => {
-    test('Not has firebase token', () => {
-      ;(nookies.get as jest.Mock).mockReturnValue({})
-      return verifyFirebaseIdToken({} as GetServerSidePropsContext).then(
-        (res) => expect(res).toEqual(false)
-      )
-    })
+const fallback: Fallback = { type: 'redirect', destination: '/foo' }
 
-    test('Has firebase token in cookie and firebaseAdmin returns verified token (logged in)', () => {
-      ;(nookies.get as jest.Mock).mockReturnValue({ __fortressFirebase: 'foo' })
-      ;(firebaseAdmin.auth as unknown as jest.Mock).mockReturnValue({
-        verifyIdToken: async () => 'foo'
-      })
-      return verifyFirebaseIdToken({} as GetServerSidePropsContext).then(
-        (res) => expect(res).toEqual(true)
-      )
-    })
-
-    test('Has firebase token in cookie and firebaseAdmin throws Error (Not logged in)', () => {
-      ;(nookies.get as jest.Mock).mockReturnValue({ __fortressFirebase: 'foo' })
-      ;(firebaseAdmin.auth as unknown as jest.Mock).mockReturnValue({
-        verifyIdToken: async () => {
-          throw new Error('')
-        }
-      })
-      return verifyFirebaseIdToken({} as GetServerSidePropsContext).then(
-        (res) => expect(res).toEqual(false)
-      )
-    })
+describe('makeFirebaseInspector', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
   })
 
-  describe('firebase', () => {
-    test('"inspectBy" is not "firebase"', () => {
-      return firebase(
-        { inspectBy: 'cognito' } as Fort,
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(false)
-      })
+  test('has no cookies', async () => {
+    await makeFirebaseInspector(fallback)({ cookies: {} } as NextRequest)
+
+    expect(handleFallback).toBeCalledWith(fallback, { cookies: {} }, undefined)
+  })
+
+  test('has the firebase cookie', async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid1'
     })
-    test('"inspectBy" is "firebase"', () => {
-      ;(nookies.get as jest.Mock).mockReturnValue({ __fortressFirebase: 'foo' })
-      ;(firebaseAdmin.auth as unknown as jest.Mock).mockReturnValue({
-        verifyIdToken: async () => 'foo'
-      })
-      return firebase(
-        { inspectBy: 'firebase' } as Fort,
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(true)
-      })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve) => resolve(true))
+    )
+    await makeFirebaseInspector(fallback)({
+      cookies: {
+        __fortressFirebaseSession: 'x.x.x'
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).not.toBeCalled()
+  })
+
+  test("has the firebase cookie, but it's not valid.", async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid1'
     })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve, reject) => reject(false))
+    )
+    const token = 'x.y.z'
+    await makeFirebaseInspector(fallback)({
+      cookies: {
+        __fortressFirebaseSession: token
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).toBeCalledWith(
+      fallback,
+      {
+        cookies: {
+          __fortressFirebaseSession: token
+        }
+      },
+      undefined
+    )
+  })
+
+  test('jwks expired.', async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid3'
+    })
+    const token = 'x.y.z'
+    await makeFirebaseInspector(fallback)({
+      cookies: {
+        __fortressFirebaseSession: token
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).toBeCalledWith(
+      fallback,
+      {
+        cookies: {
+          __fortressFirebaseSession: token
+        }
+      },
+      undefined
+    )
   })
 })

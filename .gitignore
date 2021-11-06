@@ -12,6 +12,7 @@ npm-debug.log*
 # project
 coverage
 build
+dist
 
 # log
 *.log

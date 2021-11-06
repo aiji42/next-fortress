@@ -1,5 +1,13 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import { initializeApp } from 'firebase/app'
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
+} from 'firebase/auth'
+import { FIREBASE_COOKIE_KEY } from 'next-fortress/dist/constants'
+import Cookies from 'js-cookie'
 
 export const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -10,16 +18,13 @@ export const config = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 }
 
-!firebase.apps.length ? firebase.initializeApp(config) : firebase.app()
+const firebaseApp = initializeApp(config)
 
-export const auth = firebase.auth()
-export const Firebase = firebase
+export const auth = getAuth(firebaseApp)
 
-export const Login = () => {
-  const provider = new firebase.auth.GoogleAuthProvider()
-  firebase
-    .auth()
-    .signInWithPopup(provider)
+export const login = () => {
+  const provider = new GoogleAuthProvider()
+  signInWithPopup(auth, provider)
     .then((result) => {
       return result
     })
@@ -33,9 +38,12 @@ export const Login = () => {
 }
 
 export const listenAuthState = (dispatch: any) => {
-  return firebase.auth().onAuthStateChanged(function (user) {
+  return onAuthStateChanged(auth, function (user) {
     if (user) {
       // User is signed in.
+      user
+        .getIdToken()
+        .then((token) => Cookies.set(FIREBASE_COOKIE_KEY, token, { path: '/' }))
       dispatch({
         type: 'login',
         payload: {
@@ -44,7 +52,7 @@ export const listenAuthState = (dispatch: any) => {
       })
     } else {
       // User is signed out.
-      // ...
+      Cookies.remove(FIREBASE_COOKIE_KEY)
       dispatch({
         type: 'logout'
       })
@@ -53,11 +61,11 @@ export const listenAuthState = (dispatch: any) => {
 }
 
 export const firebaseUser = () => {
-  return firebase.auth().currentUser
+  return auth.currentUser
 }
 
-export const Logout = () => {
-  auth.signOut().then(() => {
+export const logout = () => {
+  signOut(auth).then(() => {
     window.location.reload()
   })
 }

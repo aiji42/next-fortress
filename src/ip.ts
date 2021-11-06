@@ -1,25 +1,25 @@
-import { InspectByIp, Operator } from './types'
-import ipCidr from 'ip-cidr'
+import { Fallback, Middleware } from './types'
+import { Netmask } from 'netmask'
+import { NextRequest } from 'next/server'
+import { handleFallback } from './handle-fallback'
 
-export const inspectIp = (
-  ips: InspectByIp['ips'],
-  target: string | string[] | undefined
-): boolean => {
-  return (Array.isArray(ips) ? ips : [ips]).some((ip) => {
-    if (!ipCidr.isValidAddress(ip)) return false
-    const ipAddress = ipCidr.createAddress(ip)
-    return new ipCidr(
-      `${ipAddress.addressMinusSuffix}${ipAddress.subnet}`
-    ).contains(
-      Array.isArray(target) ? target[0] : target ? target.split(',')[0] : target
-    )
-  })
+type IPs = string | Array<string>
+
+export const makeIPInspector = (
+  allowedIPs: IPs,
+  fallback: Fallback
+): Middleware => {
+  return (request, event) => {
+    const ok = inspectIp(allowedIPs, request.ip)
+    if (ok) return
+    return handleFallback(fallback, request, event)
+  }
 }
 
-export const ip: Operator = async (fort, ctx) => {
-  if (fort.inspectBy !== 'ip') return false
-  if (!ctx.req.headers['x-forwarded-for'])
-    return !(fort.failSafe ?? process.env.NODE_ENV === 'production')
-
-  return inspectIp(fort.ips, ctx.req.headers['x-forwarded-for'])
+const inspectIp = (ips: IPs, target: NextRequest['ip']): boolean => {
+  if (!target) return false
+  return (Array.isArray(ips) ? ips : [ips]).some((ip) => {
+    const block = new Netmask(ip)
+    return block.contains(target)
+  })
 }

@@ -1,2 +1,5 @@
-import { withFortress } from './with-fortress'
-export default withFortress
+export { makeIPInspector } from './ip'
+export { makeFirebaseInspector } from './firebase'
+export { makeAuth0Inspector } from './auth0'
+export { makeCognitoInspector } from './cognito'
+export { FIREBASE_COOKIE_KEY } from './constants'

@@ -1,59 +1,136 @@
-import { verifyCognitoAuthenticatedUser, cognito } from '../cognito'
-import { GetServerSidePropsContext } from 'next'
-import { withSSRContext } from 'aws-amplify'
-import { Fort } from '../types'
+import { makeCognitoInspector } from '../cognito'
+import { NextRequest } from 'next/server'
+import { handleFallback } from '../handle-fallback'
+import { Fallback } from '../types'
+import { decodeProtectedHeader, jwtVerify } from 'jose'
+import fetchMock from 'fetch-mock'
 
-jest.mock('aws-amplify', () => ({
-  withSSRContext: jest.fn()
+jest.mock('jose', () => ({
+  importJWK: jest.fn(),
+  decodeProtectedHeader: jest.fn(),
+  jwtVerify: jest.fn()
 }))
 
-describe('cognito', () => {
-  describe('verifyCognitoAuthenticatedUser', () => {
-    test('when authenticated', () => {
-      ;(withSSRContext as jest.Mock).mockReturnValue({
-        Auth: { currentAuthenticatedUser: async () => ({ username: 'foo' }) }
-      })
-      return verifyCognitoAuthenticatedUser(
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(true)
-      })
-    })
-    test('when Not authenticated', () => {
-      ;(withSSRContext as jest.Mock).mockReturnValue({
-        Auth: {
-          currentAuthenticatedUser: async () => {
-            throw new Error()
-          }
+fetchMock.get(
+  'https://cognito-idp.ap-northeast-1.amazonaws.com/xxx/.well-known/jwks.json',
+  {
+    status: 200,
+    body: {
+      keys: [
+        {
+          alg: 'RS256',
+          e: 'AQAB',
+          kid: 'kid1',
+          kty: 'RSA',
+          n: 'n1',
+          use: 'sig'
+        },
+        {
+          alg: 'RS256',
+          e: 'AQAB',
+          kid: 'kid',
+          kty: 'RSA',
+          n: 'n2',
+          use: 'sig'
         }
-      })
-      return verifyCognitoAuthenticatedUser(
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(false)
-      })
-    })
+      ]
+    }
+  }
+)
+
+jest.mock('../handle-fallback', () => ({
+  handleFallback: jest.fn()
+}))
+
+const fallback: Fallback = { type: 'redirect', destination: '/foo' }
+
+describe('makeCognitoInspector', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
   })
 
-  describe('cognito', () => {
-    test('"inspectBy" is not "cognito"', () => {
-      return cognito(
-        { inspectBy: 'firebase' } as Fort,
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(false)
-      })
+  test('has no cookies', async () => {
+    await makeCognitoInspector(
+      fallback,
+      'ap-northeast-1',
+      'xxx'
+    )({ cookies: {} } as NextRequest)
+
+    expect(handleFallback).toBeCalledWith(fallback, { cookies: {} }, undefined)
+  })
+
+  test('has the firebase cookie', async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid1'
     })
-    test('"inspectBy" is "cognito"', () => {
-      ;(withSSRContext as jest.Mock).mockReturnValue({
-        Auth: { currentAuthenticatedUser: async () => ({ username: 'foo' }) }
-      })
-      return cognito(
-        { inspectBy: 'cognito' } as Fort,
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(true)
-      })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve) => resolve(true))
+    )
+    await makeCognitoInspector(
+      fallback,
+      'ap-northeast-1',
+      'xxx'
+    )({
+      cookies: {
+        'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).not.toBeCalled()
+  })
+
+  test("has the cognito cookie, but it's not valid.", async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid1'
     })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve, reject) => reject(false))
+    )
+    const token = 'x.y.z'
+    await makeCognitoInspector(
+      fallback,
+      'ap-northeast-1',
+      'xxx'
+    )({
+      cookies: {
+        'CognitoIdentityServiceProvider.xxx.idToken': token
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).toBeCalledWith(
+      fallback,
+      {
+        cookies: {
+          'CognitoIdentityServiceProvider.xxx.idToken': token
+        }
+      },
+      undefined
+    )
+  })
+
+  test('jwks expired.', async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid3'
+    })
+    const token = 'x.y.z'
+    await makeCognitoInspector(
+      fallback,
+      'ap-northeast-1',
+      'xxx'
+    )({
+      cookies: {
+        'CognitoIdentityServiceProvider.xxx.idToken': token
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).toBeCalledWith(
+      fallback,
+      {
+        cookies: {
+          'CognitoIdentityServiceProvider.xxx.idToken': token
+        }
+      },
+      undefined
+    )
   })
 })

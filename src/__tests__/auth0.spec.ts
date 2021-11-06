@@ -1,49 +1,56 @@
-import { verifyAuth0Session, auth0 } from '../auth0'
-import { GetServerSidePropsContext } from 'next'
-import { getSession } from '@auth0/nextjs-auth0'
-import { Fort } from '../types'
+import { makeAuth0Inspector } from '../auth0'
+import { handleFallback } from '../handle-fallback'
+import { Fallback } from '../types'
+import { NextRequest } from 'next/server'
+import fetchMock from 'fetch-mock'
 
-jest.mock('@auth0/nextjs-auth0', () => ({
-  getSession: jest.fn()
+jest.mock('../handle-fallback', () => ({
+  handleFallback: jest.fn()
 }))
 
-describe('auth0', () => {
-  describe('verifyAuth0Session', () => {
-    test('when authenticated', () => {
-      ;(getSession as jest.Mock).mockReturnValue({
-        user: {}
-      })
-      return verifyAuth0Session({} as GetServerSidePropsContext).then((res) => {
-        expect(res).toEqual(true)
-      })
-    })
-    test('when Not authenticated', () => {
-      ;(getSession as jest.Mock).mockReturnValue(undefined)
-      return verifyAuth0Session({} as GetServerSidePropsContext).then((res) => {
-        expect(res).toEqual(false)
-      })
-    })
+fetchMock
+  .get('/api/auth/me', {
+    status: 200
+  })
+  .get('/api/auth/failed/me', {
+    status: 403
   })
 
-  describe('auth0', () => {
-    test('"inspectBy" is not "auth0"', () => {
-      return auth0(
-        { inspectBy: 'firebase' } as Fort,
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(false)
-      })
-    })
-    test('"inspectBy" is "auth0"', () => {
-      ;(getSession as jest.Mock).mockReturnValue({
-        user: {}
-      })
-      return auth0(
-        { inspectBy: 'auth0' } as Fort,
-        {} as GetServerSidePropsContext
-      ).then((res) => {
-        expect(res).toEqual(true)
-      })
-    })
+const fallback: Fallback = { type: 'redirect', destination: '/foo' }
+
+const headers = {
+  get: () => ''
+}
+
+describe('makeAuth0Inspector', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
+  test('not logged in', async () => {
+    await makeAuth0Inspector(
+      fallback,
+      '/api/auth/failed/me'
+    )({ headers } as unknown as NextRequest)
+
+    expect(handleFallback).toBeCalledWith(fallback, { headers }, undefined)
+  })
+
+  test('does not have cookie', async () => {
+    const noCookieReq = {
+      headers: { get: () => undefined }
+    } as unknown as NextRequest
+    await makeAuth0Inspector(fallback, '/api/auth/failed/me')(noCookieReq)
+
+    expect(handleFallback).toBeCalledWith(fallback, noCookieReq, undefined)
+  })
+
+  test('logged in', async () => {
+    await makeAuth0Inspector(
+      fallback,
+      '/api/auth/me'
+    )({ headers } as unknown as NextRequest)
+
+    expect(handleFallback).not.toBeCalled()
   })
 })

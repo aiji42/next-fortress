@@ -1,77 +1,79 @@
-import { inspectIp, ip } from '../ip'
-import { Fort } from '../types'
-import { GetServerSidePropsContext } from 'next'
+import { makeIPInspector } from '../ip'
+import { NextRequest } from 'next/server'
+import { handleFallback } from '../handle-fallback'
+import { Fallback } from '../types'
 
-const OLD_ENV = { ...process.env }
+jest.mock('../handle-fallback', () => ({
+  handleFallback: jest.fn()
+}))
 
-describe('ip', () => {
-  test('inspectIp', () => {
-    expect(inspectIp('123.1.1.1', undefined)).toEqual(false)
-    expect(inspectIp('', '124.1.1.1')).toEqual(false)
-    expect(inspectIp([], '124.1.1.1')).toEqual(false)
-    expect(inspectIp('123.1.1.1', '123.1.1.1')).toEqual(true)
-    expect(inspectIp('123.1.1.0/28', '123.1.1.2')).toEqual(true)
-    expect(inspectIp('123.1.1.0/28', '124.1.1.1')).toEqual(false)
-    expect(inspectIp(['123.1.1.0/28', '124.1.1.0/28'], '124.1.1.2')).toEqual(
-      true
-    )
-    expect(inspectIp('123.1.1.0/28', '123.1.1.2,124.1.1.1')).toEqual(true)
-    expect(inspectIp('123.1.1.0/28', ['123.1.1.2', '124.1.1.1'])).toEqual(true)
+const fallback: Fallback = { type: 'redirect', destination: '/foo' }
+
+describe('makeIPInspector', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
   })
 
-  describe('ip', () => {
-    beforeAll(() => {
-      process.env = { ...OLD_ENV }
-    })
-    test('"inspectBy" is not "ip"', () => {
-      return ip(
-        { inspectBy: 'firebase' } as Fort,
-        {
-          req: { headers: { 'x-forwarded-for': '123.1.1.1' } }
-        } as unknown as GetServerSidePropsContext
-      ).then((res) => expect(res).toEqual(false))
-    })
-    test('"inspectBy" is "ip"', () => {
-      return ip(
-        { inspectBy: 'ip', ips: '123.1.1.1' } as Fort,
-        {
-          req: { headers: { 'x-forwarded-for': '123.1.1.1' } }
-        } as unknown as GetServerSidePropsContext
-      ).then((res) => expect(res).toEqual(true))
-    })
-    test('"headers" dose not have "x-forwarded-for" and failSafe is set true', () => {
-      return ip(
-        { inspectBy: 'ip', failSafe: true } as Fort,
-        {
-          req: { headers: {} }
-        } as unknown as GetServerSidePropsContext
-      ).then((res) => expect(res).toEqual(false))
-    })
-    test('"headers" dose not have "x-forwarded-for" and failSafe is set false', () => {
-      return ip(
-        { inspectBy: 'ip', failSafe: false } as Fort,
-        {
-          req: { headers: {} }
-        } as unknown as GetServerSidePropsContext
-      ).then((res) => expect(res).toEqual(true))
-    })
-    test('"headers" dose not have "x-forwarded-for" and failSafe is Not set when runs on production', () => {
-      process.env.NODE_ENV = 'production'
-      return ip(
-        { inspectBy: 'ip' } as Fort,
-        {
-          req: { headers: {} }
-        } as unknown as GetServerSidePropsContext
-      ).then((res) => expect(res).toEqual(false))
-    })
-    test('"headers" dose not have "x-forwarded-for" and failSafe is Not set when runs on NOT production', () => {
-      process.env.NODE_ENV = 'development'
-      return ip(
-        { inspectBy: 'ip' } as Fort,
-        {
-          req: { headers: {} }
-        } as unknown as GetServerSidePropsContext
-      ).then((res) => expect(res).toEqual(true))
-    })
+  test('matched with allowedIp', () => {
+    const request = {
+      ip: '10.0.0.1'
+    } as NextRequest
+    makeIPInspector('10.0.0.1/32', fallback)(request)
+    expect(handleFallback).not.toBeCalled()
+  })
+
+  test('not matched with allowedIp', () => {
+    const request = {
+      ip: '10.0.0.2'
+    } as NextRequest
+    makeIPInspector('10.0.0.1/32', fallback)(request)
+    expect(handleFallback).toBeCalledWith(
+      {
+        type: 'redirect',
+        destination: '/foo'
+      },
+      request,
+      undefined
+    )
+  })
+
+  it('must work with IP array', () => {
+    const request = {
+      ip: '11.0.0.1'
+    } as NextRequest
+    makeIPInspector(['11.0.0.1/32', '10.0.0.1/32'], fallback)(request)
+    expect(handleFallback).not.toBeCalled()
+  })
+
+  test('does not have IP', () => {
+    const request = {
+      ip: ''
+    } as NextRequest
+    makeIPInspector('10.0.0.1/32', fallback)(request)
+    expect(handleFallback).toBeCalledWith(fallback, request, undefined)
+  })
+
+  test('IP cidr', () => {
+    makeIPInspector(
+      ['11.0.0.0/16', '10.0.0.1/32'],
+      fallback
+    )({
+      ip: '11.0.255.255'
+    } as NextRequest)
+    expect(handleFallback).not.toBeCalled()
+
+    makeIPInspector(
+      ['11.0.0.0/16', '10.0.0.1/32'],
+      fallback
+    )({
+      ip: '11.1.255.255'
+    } as NextRequest)
+    expect(handleFallback).toBeCalledWith(
+      fallback,
+      {
+        ip: '11.1.255.255'
+      },
+      undefined
+    )
   })
 })
