@@ -144,7 +144,7 @@ export const middleware = async (req: NextRequest) => {
   // type makeAuth0Inspector = (fallback: Fallback, apiEndpoint: string) => AsyncMiddleware;
   return makeAuth0Inspector(
     { type: 'redirect', destination: '/singin' },
-    `${req.nextUrl.origin}/api/auth/me` // api endpoint for auth0 profile
+    '/api/auth/me' // api endpoint for auth0 profile
   )(req)
 }
 ```

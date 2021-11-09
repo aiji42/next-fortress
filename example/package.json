@@ -13,10 +13,10 @@
     "@geist-ui/react": "^2.2.0",
     "@geist-ui/react-icons": "^1.0.1",
     "aws-amplify": "^4.3.4",
-    "firebase": "^9.3.0",
+    "firebase": "^9.4.0",
     "js-cookie": "^3.0.1",
     "next": "12.0.3",
-    "next-fortress": "^3.0.0",
+    "next-fortress": "^3.1.0-beta.1",
     "react": "^17.0.2",
     "react-dom": "17.0.2"
   },
