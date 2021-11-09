@@ -17,9 +17,12 @@ const verifyAuth0Session = async (
   req: NextRequest,
   apiEndpoint: string
 ): Promise<boolean> => {
-  const res = await fetch(apiEndpoint, {
-    headers: { cookie: req.headers.get('cookie') ?? '' }
-  })
+  const res = await fetch(
+    (/^\//.test(apiEndpoint) ? req.nextUrl.origin : '') + apiEndpoint,
+    {
+      headers: { cookie: req.headers.get('cookie') ?? '' }
+    }
+  )
 
   return res.ok
 }
