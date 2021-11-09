@@ -6,6 +6,6 @@ export const middleware = async (req: NextRequest) => {
 
   return makeAuth0Inspector(
     { type: 'redirect', destination: '/auth0' },
-    req.nextUrl.origin + '/api/auth/me'
+    '/api/auth/me'
   )(req)
 }
