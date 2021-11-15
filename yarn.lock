@@ -6841,9 +6841,9 @@ jest@^27.3.1:
     jest-cli "^27.3.1"
 
 jose@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-4.2.0.tgz#eb3dfe4926514a99f325ba604d32e41589394f6d"
-  integrity sha512-7nlU7qankWiES1WmZXAJl0jiGusoouXhjiGR12yc+0/SIDi+4uhEGzqcfONtDI7g66K4IyqA44botXGpi9EBWA==
+  version "4.3.5"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-4.3.5.tgz#890ec0b3bf26db0b36946ca54087335200deb6f7"
+  integrity sha512-mdTu3En79OYMGBNHw4828hl6ZUOb+gQtNZVRgM+eVL3Rrs4ZYUv/yHPpfDh65GN2HhKBvJsvA0/6tKEcpkyzeg==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
