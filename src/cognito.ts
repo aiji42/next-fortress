@@ -6,13 +6,16 @@ import { decodeProtectedHeader, importJWK, JWK, jwtVerify } from 'jose'
 export const makeCognitoInspector = (
   fallback: Fallback,
   cognitoRegion: string,
-  cognitoUserPoolId: string
+  cognitoUserPoolId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customHandler?: (payload: any) => boolean
 ): AsyncMiddleware => {
   return async (request, event) => {
     const ok = await verifyCognitoAuthenticatedUser(
       request,
       cognitoRegion,
-      cognitoUserPoolId
+      cognitoUserPoolId,
+      customHandler
     )
     if (ok) return
     return handleFallback(fallback, request, event)
@@ -22,7 +25,9 @@ export const makeCognitoInspector = (
 const verifyCognitoAuthenticatedUser = async (
   req: NextRequest,
   region: string,
-  poolId: string
+  poolId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customHandler?: (payload: any) => boolean
 ): Promise<boolean> => {
   const token = Object.entries(req.cookies).find(([key]) =>
     /CognitoIdentityServiceProvider\..+\.idToken/.test(key)
@@ -38,6 +43,6 @@ const verifyCognitoAuthenticatedUser = async (
   if (!jwk) return false
 
   return jwtVerify(token, await importJWK(jwk))
-    .then(() => true)
+    .then((res) => customHandler?.(res.payload) ?? true)
     .catch(() => false)
 }
