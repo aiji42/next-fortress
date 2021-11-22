@@ -4,10 +4,12 @@ import { handleFallback } from './handle-fallback'
 
 export const makeAuth0Inspector = (
   fallback: Fallback,
-  apiEndpoint: string
+  apiEndpoint: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customHandler?: (payload: any) => boolean
 ): AsyncMiddleware => {
   return async (request, event) => {
-    const ok = await verifyAuth0Session(request, apiEndpoint)
+    const ok = await verifyAuth0Session(request, apiEndpoint, customHandler)
     if (ok) return
     return handleFallback(fallback, request, event)
   }
@@ -15,7 +17,9 @@ export const makeAuth0Inspector = (
 
 const verifyAuth0Session = async (
   req: NextRequest,
-  apiEndpoint: string
+  apiEndpoint: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customHandler?: (payload: any) => boolean
 ): Promise<boolean> => {
   const res = await fetch(
     (/^\//.test(apiEndpoint) ? req.nextUrl.origin : '') + apiEndpoint,
@@ -24,5 +28,5 @@ const verifyAuth0Session = async (
     }
   )
 
-  return res.ok
+  return !res.ok ? false : customHandler?.(await res.json()) ?? true
 }
