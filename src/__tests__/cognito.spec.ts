@@ -79,6 +79,33 @@ describe('makeCognitoInspector', () => {
     expect(handleFallback).not.toBeCalled()
   })
 
+  test('has the firebase cookie and passed custom handler', async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid1'
+    })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve) =>
+        resolve({
+          payload: {
+            email_verified: true
+          }
+        })
+      )
+    )
+    await makeCognitoInspector(
+      fallback,
+      'ap-northeast-1',
+      'xxx',
+      (res) => !!res.email_verified
+    )({
+      cookies: {
+        'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).not.toBeCalled()
+  })
+
   test("has the cognito cookie, but it's not valid.", async () => {
     ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
       kid: 'kid1'

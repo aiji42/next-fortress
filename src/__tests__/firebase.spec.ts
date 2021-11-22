@@ -4,6 +4,7 @@ import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
 import fetchMock from 'fetch-mock'
 import { decodeProtectedHeader, jwtVerify } from 'jose'
+import { toJwk } from 'js-x509-utils'
 
 jest.mock('jose', () => ({
   importJWK: jest.fn(),
@@ -11,32 +12,30 @@ jest.mock('jose', () => ({
   jwtVerify: jest.fn()
 }))
 
-fetchMock.get(
-  'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com',
-  {
-    status: 200,
-    body: {
-      keys: [
-        {
-          kid: 'kid1',
-          n: 'n2',
-          kty: 'RSA',
-          use: 'sig',
-          e: 'AQAB',
-          alg: 'RS256'
-        },
-        {
-          kid: 'kid2',
-          n: 'n2',
-          kty: 'RSA',
-          use: 'sig',
-          e: 'AQAB',
-          alg: 'RS256'
-        }
-      ]
+jest.mock('js-x509-utils', () => ({
+  toJwk: jest.fn()
+}))
+
+fetchMock
+  .get(
+    'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com',
+    {
+      status: 200,
+      body: {
+        kid1: 'xxxxxxxxxx',
+        kid2: 'yyyyyyyyyy'
+      }
     }
-  }
-)
+  )
+  .get(
+    'https://www.googleapis.com/identitytoolkit/v3/relyingparty/publicKeys',
+    {
+      status: 200,
+      body: {
+        kid3: 'zzzzzzzzzz'
+      }
+    }
+  )
 
 jest.mock('../handle-fallback', () => ({
   handleFallback: jest.fn()
@@ -44,9 +43,12 @@ jest.mock('../handle-fallback', () => ({
 
 const fallback: Fallback = { type: 'redirect', destination: '/foo' }
 
+const originalEnv = { ...process.env }
+
 describe('makeFirebaseInspector', () => {
   beforeEach(() => {
     jest.resetAllMocks()
+    process.env = originalEnv
   })
 
   test('has no cookies', async () => {
@@ -63,6 +65,53 @@ describe('makeFirebaseInspector', () => {
       new Promise((resolve) => resolve(true))
     )
     await makeFirebaseInspector(fallback)({
+      cookies: {
+        __fortressFirebaseSession: 'x.x.x'
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).not.toBeCalled()
+  })
+
+  test('has the firebase cookie by custom key', async () => {
+    process.env = {
+      ...process.env,
+      FORTRESS_FIREBASE_COOKIE_KEY: 'session'
+    }
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid1'
+    })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve) => resolve(true))
+    )
+    await makeFirebaseInspector(fallback)({
+      cookies: {
+        session: 'x.x.x'
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).not.toBeCalled()
+  })
+
+  test('has the firebase cookie and passed custom handler', async () => {
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid1'
+    })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve) =>
+        resolve({
+          payload: {
+            firebase: {
+              sign_in_provider: 'google.com'
+            }
+          }
+        })
+      )
+    )
+    await makeFirebaseInspector(
+      fallback,
+      (res) => res.firebase.sign_in_provider === 'google.com'
+    )({
       cookies: {
         __fortressFirebaseSession: 'x.x.x'
       }
@@ -116,5 +165,28 @@ describe('makeFirebaseInspector', () => {
       },
       undefined
     )
+    expect(toJwk).toBeCalledWith(undefined, 'pem')
+  })
+
+  test('session cookie mode', async () => {
+    process.env = {
+      ...process.env,
+      FORTRESS_FIREBASE_MODE: 'session'
+    }
+    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+      kid: 'kid3'
+    })
+    ;(jwtVerify as jest.Mock).mockReturnValue(
+      new Promise((resolve) => resolve(true))
+    )
+    const token = 'x.y.z'
+    await makeFirebaseInspector(fallback)({
+      cookies: {
+        __fortressFirebaseSession: token
+      }
+    } as unknown as NextRequest)
+
+    expect(handleFallback).not.toBeCalled()
+    expect(toJwk).toBeCalledWith('zzzzzzzzzz', 'pem')
   })
 })

@@ -10,13 +10,19 @@ jest.mock('../handle-fallback', () => ({
 
 fetchMock
   .get('/api/auth/me', {
-    status: 200
+    status: 200,
+    body: {
+      email_verified: true
+    }
   })
   .get('/api/auth/failed/me', {
     status: 401
   })
   .get('https://authed.com/api/auth/me', {
-    status: 200
+    status: 200,
+    body: {
+      email_verified: true
+    }
   })
   .get('https://not.authed.com/api/auth/me', {
     status: 401
@@ -55,6 +61,26 @@ describe('makeAuth0Inspector', () => {
       await makeAuth0Inspector(
         fallback,
         '/api/auth/me'
+      )({ headers, nextUrl: { origin: '' } } as unknown as NextRequest)
+
+      expect(handleFallback).not.toBeCalled()
+    })
+
+    test('the domain of api endpoint is specified', async () => {
+      const req = { headers, nextUrl: { origin: '' } } as unknown as NextRequest
+      await makeAuth0Inspector(
+        fallback,
+        'https://not.authed.com/api/auth/me'
+      )(req)
+
+      expect(handleFallback).toBeCalledWith(fallback, req, undefined)
+    })
+
+    test('logged in and passed custom handler', async () => {
+      await makeAuth0Inspector(
+        fallback,
+        '/api/auth/me',
+        (res) => !!res.email_verified
       )({ headers, nextUrl: { origin: '' } } as unknown as NextRequest)
 
       expect(handleFallback).not.toBeCalled()
