@@ -14,7 +14,7 @@ const handler: NextApiHandler = async (req, res) => {
   const sessionCookie = await auth.createSessionCookie(id, { expiresIn })
 
   const options = {
-    maxAge: expiresIn,
+    maxAge: expiresIn / 1000,
     httpOnly: true,
     secure: true,
     path: '/'
