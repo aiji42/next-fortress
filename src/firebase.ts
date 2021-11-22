@@ -2,8 +2,7 @@ import { AsyncMiddleware, Fallback } from './types'
 import { FIREBASE_COOKIE_KEY } from './constants'
 import { NextRequest } from 'next/server'
 import { handleFallback } from './handle-fallback'
-import { decodeProtectedHeader, jwtVerify, importJWK } from 'jose'
-import { toJwk } from 'js-x509-utils'
+import { decodeProtectedHeader, jwtVerify, importX509 } from 'jose'
 
 export const makeFirebaseInspector = (
   fallback: Fallback,
@@ -36,11 +35,9 @@ const verifyFirebaseIdToken = async (
     const keys: Record<string, string> = await fetch(endpoint).then((res) =>
       res.json()
     )
+    const { kid = '' } = decodeProtectedHeader(token)
 
-    const { kid = '', alg } = decodeProtectedHeader(token)
-    const jwk = await toJwk(keys[kid], 'pem')
-
-    return jwtVerify(token, await importJWK({ ...jwk, alg }))
+    return jwtVerify(token, await importX509(keys[kid], 'RS256'))
       .then((res) => customHandler?.(res.payload) ?? true)
       .catch(() => false)
   } catch (_) {

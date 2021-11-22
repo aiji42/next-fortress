@@ -3,17 +3,13 @@ import { NextRequest } from 'next/server'
 import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
 import fetchMock from 'fetch-mock'
-import { decodeProtectedHeader, jwtVerify } from 'jose'
-import { toJwk } from 'js-x509-utils'
+import { decodeProtectedHeader, jwtVerify, importX509 } from 'jose'
 
 jest.mock('jose', () => ({
   importJWK: jest.fn(),
   decodeProtectedHeader: jest.fn(),
-  jwtVerify: jest.fn()
-}))
-
-jest.mock('js-x509-utils', () => ({
-  toJwk: jest.fn()
+  jwtVerify: jest.fn(),
+  importX509: jest.fn()
 }))
 
 fetchMock
@@ -165,7 +161,7 @@ describe('makeFirebaseInspector', () => {
       },
       undefined
     )
-    expect(toJwk).toBeCalledWith(undefined, 'pem')
+    expect(importX509).toBeCalledWith(undefined, 'RS256')
   })
 
   test('session cookie mode', async () => {
@@ -187,6 +183,6 @@ describe('makeFirebaseInspector', () => {
     } as unknown as NextRequest)
 
     expect(handleFallback).not.toBeCalled()
-    expect(toJwk).toBeCalledWith('zzzzzzzzzz', 'pem')
+    expect(importX509).toBeCalledWith('zzzzzzzzzz', 'RS256')
   })
 })

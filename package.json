@@ -61,7 +61,6 @@
   },
   "dependencies": {
     "jose": "^4.3.7",
-    "js-x509-utils": "^1.0.3",
     "netmask": "^2.0.2"
   }
 }
