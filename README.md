@@ -50,15 +50,13 @@ type Middleware = (request: NextRequest, event?: NextFetchEvent) => Response | u
 import { makeIPInspector } from 'next-fortress'
 import { NextRequest } from 'next/server'
 
-export const middleware = (req: NextRequest) => {
-  // type IPs = string | Array<string>
-  // type makeIPInspector = (allowedIPs: IPs, fallback: Fallback) => Middleware
-  // IP can be specified in CIDR format. You can also specify multiple IPs in an array.
-  return makeIPInspector('123.123.123.123/32', {
-    type: 'redirect',
-    destination: '/'
-  })(req)
-}
+// type IPs = string | Array<string>
+// type makeIPInspector = (allowedIPs: IPs, fallback: Fallback) => Middleware
+// IP can be specified in CIDR format. You can also specify multiple IPs in an array.
+export const middleware = makeIPInspector('123.123.123.123/32', {
+  type: 'redirect',
+  destination: '/'
+})
 ```
 
 ### Control by Firebase
@@ -69,17 +67,14 @@ export const middleware = (req: NextRequest) => {
 ```ts
 // /pages/mypage/_middleware.ts
 import { makeFirebaseInspector } from 'next-fortress'
-import { NextRequest } from 'next/server'
 
-export const middleware = async (req: NextRequest) => {
-  // type makeFirebaseInspector = (fallback: Fallback) => AsyncMiddleware;
-  return makeFirebaseInspector(
-    { type: 'redirect', destination: '/signin' }
-  )(req)
-}
+// type makeFirebaseInspector = (fallback: Fallback, customHandler?: (payload: any) => boolean) => AsyncMiddleware;
+export const middleware = makeFirebaseInspector(
+  { type: 'redirect', destination: '/signin' }
+)
 ```
 
-Put the Firebase user token into the cookie using the following example.
+Put the Firebase user token into the cookie using the following example.  
 ```ts
 // cient side code (for example /pages/_app.tsx)
 import { FIREBASE_COOKIE_KEY } from 'next-fortress/dist/constants'
@@ -99,6 +94,23 @@ firebase.auth().onAuthStateChanged(function (user) {
 })
 ```
 
+For the second argument of `makeFirebaseInspector`, you can pass a payload inspection function. This is useful, for example, if you want to ignore some authentication providers, or if you need to ensure that the email has been verified.  
+If this function returns false, it will enter the fallback case.
+```ts
+// /pages/mypage/_middleware.ts
+import { makeFirebaseInspector } from 'next-fortress'
+
+// Redirect for anonymous users.
+export const middleware = makeFirebaseInspector(
+  { type: 'redirect', destination: '/signin' },
+  (payload) => payload.firebase.sign_in_provider !== 'anonymous'
+)
+```
+
+**NOTE**
+- If you want to specify the cookie key, use the environment variable `FORTRESS_FIREBASE_COOKIE_KEY`.  
+- If you use [session cookies](https://firebase.google.com/docs/auth/admin/manage-cookies) to share authentication data with the server side, set the environment variable `FORTRESS_FIREBASE_MODE` to `session`.
+
 ### Control by Amazon Cognito
 
 [example](https://next-fortress.vercel.app/cognito)
@@ -106,17 +118,14 @@ firebase.auth().onAuthStateChanged(function (user) {
 ```ts
 // /pages/mypage/_middleware.ts
 import { makeCognitoInspector } from 'next-fortress'
-import { NextRequest } from 'next/server'
 
-export const middleware = async (req: NextRequest) => {
-  // type makeCognitoInspector =
-  //     (fallback: Fallback, cognitoRegion: string, cognitoUserPoolId: string) => AsyncMiddleware;
-  return makeCognitoInspector(
-    { type: 'redirect', destination: '/signin' },
-    process.env.COGNITO_REGION,
-    process.env.COGNITO_USER_POOL_ID
-  )(req)
-}
+// type makeCognitoInspector =
+//     (fallback: Fallback, cognitoRegion: string, cognitoUserPoolId: string, customHandler?: (payload: any) => boolean) => AsyncMiddleware;
+export const middleware = makeCognitoInspector(
+  { type: 'redirect', destination: '/signin' },
+  process.env.COGNITO_REGION,
+  process.env.COGNITO_USER_POOL_ID
+)
 ```
 
 Add `ssr: true` option to `Amplify.configure` to handle the Cognito cookies on the edge.
@@ -131,6 +140,21 @@ Amplify.configure({
 })
 ```
 
+For the 4th argument of `makeCognitoInspector`, you can pass a payload inspection function. This is useful, for example, if you want to ignore some authentication providers, or if you need to ensure that the email has been verified.  
+If this function returns false, it will enter the fallback case.
+```ts
+// /pages/mypage/_middleware.ts
+import { makeCognitoInspector } from 'next-fortress'
+
+// Fallback if the email address is not verified.
+export const middleware = makeCognitoInspector(
+  { type: 'redirect', destination: '/signin' },
+  process.env.COGNITO_REGION,
+  process.env.COGNITO_USER_POOL_ID,
+  (payload) => payload.email_verified
+)
+```
+
 ### Control by Auth0
 
 [example](https://next-fortress.vercel.app/auth0)
@@ -138,15 +162,12 @@ Amplify.configure({
 ```ts
 // /pages/mypage/_middleware.ts
 import { makeAuth0Inspector } from 'next-fortress'
-import { NextRequest } from 'next/server'
 
-export const middleware = async (req: NextRequest) => {
-  // type makeAuth0Inspector = (fallback: Fallback, apiEndpoint: string) => AsyncMiddleware;
-  return makeAuth0Inspector(
-    { type: 'redirect', destination: '/singin' },
-    '/api/auth/me' // api endpoint for auth0 profile
-  )(req)
-}
+// type makeAuth0Inspector = (fallback: Fallback, apiEndpoint: string, customHandler?: (payload: any) => boolean) => AsyncMiddleware;
+export const middleware = makeAuth0Inspector(
+  { type: 'redirect', destination: '/singin' },
+  '/api/auth/me' // api endpoint for auth0 profile
+)
 ```
 
 To use Auth0, the api root must have an endpoint. [@auth0/nextjs-auth0](https://github.com/auth0/nextjs-auth0#basic-setup)
@@ -155,6 +176,20 @@ To use Auth0, the api root must have an endpoint. [@auth0/nextjs-auth0](https://
 import { handleAuth } from '@auth0/nextjs-auth0'
 
 export default handleAuth()
+```
+
+For the third argument of `makeAuth0Inspector`, you can pass a payload inspection function. This is useful, for example, if you need to ensure that the email has been verified.  
+If this function returns false, it will enter the fallback case.
+```ts
+// /pages/mypage/_middleware.ts
+import { makeAuth0Inspector } from 'next-fortress'
+
+// Fallback if the email address is not verified.
+export const middleware = makeAuth0Inspector(
+  { type: 'redirect', destination: '/singin' },
+  '/api/auth/me',
+  (payload) => payload.email_verified
+)
 ```
 
 ## Contributing

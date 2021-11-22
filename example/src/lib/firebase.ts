@@ -4,10 +4,9 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
-  signOut
+  signOut,
+  signInAnonymously
 } from 'firebase/auth'
-import { FIREBASE_COOKIE_KEY } from 'next-fortress/dist/constants'
-import Cookies from 'js-cookie'
 
 export const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -38,12 +37,14 @@ export const login = () => {
 }
 
 export const listenAuthState = (dispatch: any) => {
-  return onAuthStateChanged(auth, function (user) {
+  return onAuthStateChanged(auth, async function (user) {
     if (user) {
       // User is signed in.
-      user
-        .getIdToken()
-        .then((token) => Cookies.set(FIREBASE_COOKIE_KEY, token, { path: '/' }))
+      const id = await user.getIdToken()
+      await fetch('/api/firebase/login', {
+        method: 'POST',
+        body: JSON.stringify({ id })
+      })
       dispatch({
         type: 'login',
         payload: {
@@ -52,7 +53,10 @@ export const listenAuthState = (dispatch: any) => {
       })
     } else {
       // User is signed out.
-      Cookies.remove(FIREBASE_COOKIE_KEY)
+      await fetch('/api/firebase/logout', {
+        method: 'POST'
+      })
+      await signInAnonymously(auth)
       dispatch({
         type: 'logout'
       })
