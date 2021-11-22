@@ -6,6 +6,7 @@ module.exports = {
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000'),
     FORTRESS_FIREBASE_COOKIE_KEY: 'session',
-    FORTRESS_FIREBASE_MODE: 'session'
+    FORTRESS_FIREBASE_MODE: 'session',
+    AUTH0_POST_LOGOUT_REDIRECT: '/auth0'
   }
 }
