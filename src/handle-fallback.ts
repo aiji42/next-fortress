@@ -10,5 +10,6 @@ export const handleFallback = (
   if (fallback.type === 'rewrite')
     return NextResponse.rewrite(fallback.destination)
 
-  return NextResponse.redirect(fallback.destination, fallback.statusCode)
+  if (request.nextUrl.pathname !== fallback.destination)
+    return NextResponse.redirect(fallback.destination, fallback.statusCode)
 }
