@@ -9,14 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^1.6.1",
+    "@auth0/nextjs-auth0": "^1.6.2",
     "@geist-ui/react": "^2.2.0",
     "@geist-ui/react-icons": "^1.0.1",
-    "aws-amplify": "^4.3.8",
-    "firebase": "^9.5.0",
-    "firebase-admin": "^10.0.0",
+    "aws-amplify": "^4.3.11",
+    "firebase": "^9.6.1",
+    "firebase-admin": "^10.0.1",
     "js-cookie": "^3.0.1",
-    "next": "12.0.4",
+    "next": "12.0.7",
     "next-fortress": "3.2.1-beta.1",
     "nookies": "^2.5.2",
     "react": "^17.0.2",
@@ -24,9 +24,9 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.1",
-    "@types/react": "17.0.36",
-    "eslint": "8.3.0",
-    "eslint-config-next": "12.0.4",
-    "typescript": "4.5.2"
+    "@types/react": "17.0.37",
+    "eslint": "8.5.0",
+    "eslint-config-next": "12.0.7",
+    "typescript": "4.5.4"
   }
 }
