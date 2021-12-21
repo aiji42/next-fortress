@@ -41,7 +41,7 @@ const IndexPage: VFC = () => {
           </button>
         )}
 
-        <Link href="/cognito/authed" prefetch={false}>
+        <Link href="/cognito/authed" prefetch>
           <div className={styles.card}>
             <h2>Go My Page &rarr;</h2>
             {!login && <p>(Not Allowed)</p>}

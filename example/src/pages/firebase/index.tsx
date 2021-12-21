@@ -1,6 +1,7 @@
 import { login, logout, auth } from '../../lib/firebase'
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
+import Link from 'next/link'
 import { VFC } from 'react'
 import { Text } from '@geist-ui/react'
 
@@ -31,12 +32,14 @@ const IndexPage: VFC = () => {
           </button>
         )}
 
-        <a href="/firebase/authed" className={styles.card}>
-          <h2>Go My Page &rarr;</h2>
-          {(!auth.currentUser || auth.currentUser.isAnonymous) && (
-            <p>(Not Allowed)</p>
-          )}
-        </a>
+        <Link href="/firebase/authed" passHref>
+          <a className={styles.card}>
+            <h2>Go My Page &rarr;</h2>
+            {(!auth.currentUser || auth.currentUser.isAnonymous) && (
+              <p>(Not Allowed)</p>
+            )}
+          </a>
+        </Link>
       </div>
     </>
   )
