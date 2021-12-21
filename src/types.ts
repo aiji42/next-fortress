@@ -1,17 +1,7 @@
-import { NextRequest, NextFetchEvent } from 'next/server'
-
-export type Middleware = (
-  request: NextRequest,
-  event?: NextFetchEvent
-) => Response | undefined
-
-export type AsyncMiddleware = (
-  request: NextRequest,
-  event?: NextFetchEvent
-) => Promise<Response | undefined>
+import { NextMiddleware } from 'next/server'
 
 export type Fallback =
-  | Middleware
+  | NextMiddleware
   | { type: 'rewrite'; destination: string }
   | {
       type: 'redirect'
