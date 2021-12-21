@@ -1,6 +1,6 @@
-import { AsyncMiddleware, Fallback } from './types'
+import { Fallback } from './types'
 import { FIREBASE_COOKIE_KEY } from './constants'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextMiddleware } from 'next/server'
 import { handleFallback } from './handle-fallback'
 import { decodeProtectedHeader, jwtVerify, importX509 } from 'jose'
 
@@ -8,7 +8,7 @@ export const makeFirebaseInspector = (
   fallback: Fallback,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customHandler?: (payload: any) => boolean
-): AsyncMiddleware => {
+): NextMiddleware => {
   return async (request, event) => {
     const ok = await verifyFirebaseIdToken(request, customHandler)
     if (ok) return

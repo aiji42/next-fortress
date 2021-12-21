@@ -1,5 +1,5 @@
-import { AsyncMiddleware, Fallback } from './types'
-import { NextRequest } from 'next/server'
+import { Fallback } from './types'
+import { NextRequest, NextMiddleware } from 'next/server'
 import { handleFallback } from './handle-fallback'
 import { decodeProtectedHeader, importJWK, JWK, jwtVerify } from 'jose'
 
@@ -9,7 +9,7 @@ export const makeCognitoInspector = (
   cognitoUserPoolId: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customHandler?: (payload: any) => boolean
-): AsyncMiddleware => {
+): NextMiddleware => {
   return async (request, event) => {
     const ok = await verifyCognitoAuthenticatedUser(
       request,

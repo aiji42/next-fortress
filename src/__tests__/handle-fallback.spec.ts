@@ -2,10 +2,7 @@ import { handleFallback } from '../handle-fallback'
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
 jest.mock('next/server', () => ({
-  NextResponse: {
-    rewrite: jest.fn(),
-    redirect: jest.fn()
-  }
+  NextResponse: jest.fn()
 }))
 
 const dummyRequest = { nextUrl: { pathname: '/' } } as NextRequest
@@ -23,7 +20,19 @@ describe('handleFallback', () => {
     expect(fallback).toBeCalledWith(dummyRequest, dummyEvent)
   })
 
+  test('handle preflight', () => {
+    NextResponse.redirect = jest.fn()
+    handleFallback(
+      { type: 'redirect', destination: '/foo/bar' },
+      { ...dummyRequest, preflight: 1 } as unknown as NextRequest,
+      dummyEvent
+    )
+    expect(NextResponse.redirect).not.toBeCalled()
+    expect(NextResponse).toBeCalledWith(null)
+  })
+
   test('passed redirect option', () => {
+    NextResponse.redirect = jest.fn()
     handleFallback(
       { type: 'redirect', destination: '/foo/bar' },
       dummyRequest,
@@ -51,6 +60,7 @@ describe('handleFallback', () => {
   })
 
   test('passed rewrite option', () => {
+    NextResponse.rewrite = jest.fn()
     handleFallback(
       { type: 'rewrite', destination: '/foo/bar' },
       dummyRequest,

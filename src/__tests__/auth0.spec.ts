@@ -1,12 +1,14 @@
 import { makeAuth0Inspector } from '../auth0'
 import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
-import { NextRequest } from 'next/server'
+import { NextFetchEvent, NextRequest } from 'next/server'
 import fetchMock from 'fetch-mock'
 
 jest.mock('../handle-fallback', () => ({
   handleFallback: jest.fn()
 }))
+
+const event = {} as NextFetchEvent
 
 fetchMock
   .get('/api/auth/me', {
@@ -42,9 +44,9 @@ describe('makeAuth0Inspector', () => {
   describe('dose not have nextUrl origin', () => {
     test('not logged in', async () => {
       const req = { headers, nextUrl: { origin: '' } } as unknown as NextRequest
-      await makeAuth0Inspector(fallback, '/api/auth/failed/me')(req)
+      await makeAuth0Inspector(fallback, '/api/auth/failed/me')(req, event)
 
-      expect(handleFallback).toBeCalledWith(fallback, req, undefined)
+      expect(handleFallback).toBeCalledWith(fallback, req, event)
     })
 
     test('does not have cookie', async () => {
@@ -52,28 +54,31 @@ describe('makeAuth0Inspector', () => {
         headers: { get: () => undefined },
         nextUrl: { origin: '' }
       } as unknown as NextRequest
-      await makeAuth0Inspector(fallback, '/api/auth/failed/me')(noCookieReq)
+      await makeAuth0Inspector(fallback, '/api/auth/failed/me')(
+        noCookieReq,
+        event
+      )
 
-      expect(handleFallback).toBeCalledWith(fallback, noCookieReq, undefined)
+      expect(handleFallback).toBeCalledWith(fallback, noCookieReq, event)
     })
 
     test('logged in', async () => {
-      await makeAuth0Inspector(
-        fallback,
-        '/api/auth/me'
-      )({ headers, nextUrl: { origin: '' } } as unknown as NextRequest)
+      await makeAuth0Inspector(fallback, '/api/auth/me')(
+        { headers, nextUrl: { origin: '' } } as unknown as NextRequest,
+        event
+      )
 
       expect(handleFallback).not.toBeCalled()
     })
 
     test('the domain of api endpoint is specified', async () => {
       const req = { headers, nextUrl: { origin: '' } } as unknown as NextRequest
-      await makeAuth0Inspector(
-        fallback,
-        'https://not.authed.com/api/auth/me'
-      )(req)
+      await makeAuth0Inspector(fallback, 'https://not.authed.com/api/auth/me')(
+        req,
+        event
+      )
 
-      expect(handleFallback).toBeCalledWith(fallback, req, undefined)
+      expect(handleFallback).toBeCalledWith(fallback, req, event)
     })
 
     test('logged in and passed custom handler', async () => {
@@ -81,7 +86,7 @@ describe('makeAuth0Inspector', () => {
         fallback,
         '/api/auth/me',
         (res) => !!res.email_verified
-      )({ headers, nextUrl: { origin: '' } } as unknown as NextRequest)
+      )({ headers, nextUrl: { origin: '' } } as unknown as NextRequest, event)
 
       expect(handleFallback).not.toBeCalled()
     })
@@ -93,19 +98,19 @@ describe('makeAuth0Inspector', () => {
         headers,
         nextUrl: { origin: 'https://not.authed.com' }
       } as unknown as NextRequest
-      await makeAuth0Inspector(fallback, '/api/auth/me')(req)
+      await makeAuth0Inspector(fallback, '/api/auth/me')(req, event)
 
-      expect(handleFallback).toBeCalledWith(fallback, req, undefined)
+      expect(handleFallback).toBeCalledWith(fallback, req, event)
     })
 
     test('logged in', async () => {
-      await makeAuth0Inspector(
-        fallback,
-        '/api/auth/me'
-      )({
-        headers,
-        nextUrl: { origin: 'https://authed.com' }
-      } as unknown as NextRequest)
+      await makeAuth0Inspector(fallback, '/api/auth/me')(
+        {
+          headers,
+          nextUrl: { origin: 'https://authed.com' }
+        } as unknown as NextRequest,
+        event
+      )
 
       expect(handleFallback).not.toBeCalled()
     })

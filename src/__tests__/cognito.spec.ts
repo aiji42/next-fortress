@@ -1,5 +1,5 @@
 import { makeCognitoInspector } from '../cognito'
-import { NextRequest } from 'next/server'
+import { NextFetchEvent, NextRequest } from 'next/server'
 import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
 import { decodeProtectedHeader, jwtVerify } from 'jose'
@@ -44,6 +44,8 @@ jest.mock('../handle-fallback', () => ({
 
 const fallback: Fallback = { type: 'redirect', destination: '/foo' }
 
+const event = {} as NextFetchEvent
+
 describe('makeCognitoInspector', () => {
   beforeEach(() => {
     jest.resetAllMocks()
@@ -54,9 +56,9 @@ describe('makeCognitoInspector', () => {
       fallback,
       'ap-northeast-1',
       'xxx'
-    )({ cookies: {} } as NextRequest)
+    )({ cookies: {} } as NextRequest, event)
 
-    expect(handleFallback).toBeCalledWith(fallback, { cookies: {} }, undefined)
+    expect(handleFallback).toBeCalledWith(fallback, { cookies: {} }, event)
   })
 
   test('has the firebase cookie', async () => {
@@ -70,11 +72,14 @@ describe('makeCognitoInspector', () => {
       fallback,
       'ap-northeast-1',
       'xxx'
-    )({
-      cookies: {
-        'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
-      }
-    } as unknown as NextRequest)
+    )(
+      {
+        cookies: {
+          'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
+        }
+      } as unknown as NextRequest,
+      event
+    )
 
     expect(handleFallback).not.toBeCalled()
   })
@@ -97,11 +102,14 @@ describe('makeCognitoInspector', () => {
       'ap-northeast-1',
       'xxx',
       (res) => !!res.email_verified
-    )({
-      cookies: {
-        'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
-      }
-    } as unknown as NextRequest)
+    )(
+      {
+        cookies: {
+          'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
+        }
+      } as unknown as NextRequest,
+      event
+    )
 
     expect(handleFallback).not.toBeCalled()
   })
@@ -118,11 +126,14 @@ describe('makeCognitoInspector', () => {
       fallback,
       'ap-northeast-1',
       'xxx'
-    )({
-      cookies: {
-        'CognitoIdentityServiceProvider.xxx.idToken': token
-      }
-    } as unknown as NextRequest)
+    )(
+      {
+        cookies: {
+          'CognitoIdentityServiceProvider.xxx.idToken': token
+        }
+      } as unknown as NextRequest,
+      event
+    )
 
     expect(handleFallback).toBeCalledWith(
       fallback,
@@ -131,7 +142,7 @@ describe('makeCognitoInspector', () => {
           'CognitoIdentityServiceProvider.xxx.idToken': token
         }
       },
-      undefined
+      event
     )
   })
 
@@ -144,11 +155,14 @@ describe('makeCognitoInspector', () => {
       fallback,
       'ap-northeast-1',
       'xxx'
-    )({
-      cookies: {
-        'CognitoIdentityServiceProvider.xxx.idToken': token
-      }
-    } as unknown as NextRequest)
+    )(
+      {
+        cookies: {
+          'CognitoIdentityServiceProvider.xxx.idToken': token
+        }
+      } as unknown as NextRequest,
+      event
+    )
 
     expect(handleFallback).toBeCalledWith(
       fallback,
@@ -157,7 +171,7 @@ describe('makeCognitoInspector', () => {
           'CognitoIdentityServiceProvider.xxx.idToken': token
         }
       },
-      undefined
+      event
     )
   })
 })

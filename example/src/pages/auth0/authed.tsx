@@ -1,7 +1,6 @@
 import styles from '../../styles/Home.module.css'
 import Head from 'next/head'
 import { VFC } from 'react'
-
 import { useUser } from '@auth0/nextjs-auth0'
 import { Text } from '@geist-ui/react'
 

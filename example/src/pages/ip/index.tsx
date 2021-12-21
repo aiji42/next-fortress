@@ -3,10 +3,8 @@ import { useEffect, VFC } from 'react'
 import Cookies from 'js-cookie'
 import { Button, Text, Spacer, Input, useInput, Link } from '@geist-ui/react'
 import NextLink from 'next/link'
-import { useRouter } from 'next/router'
 
 const IndexPage: VFC = () => {
-  const router = useRouter()
   const { state: ips, setState: setIps, reset, bindings } = useInput('')
   useEffect(() => {
     const cookie = Cookies.get('__allowed_ips')
@@ -14,11 +12,9 @@ const IndexPage: VFC = () => {
   }, [])
   const setIPToCookie = () => {
     Cookies.set('__allowed_ips', ips, { path: '/' })
-    router.reload()
   }
   const resetIPToCookie = () => {
     Cookies.remove('__allowed_ips')
-    router.reload()
     reset()
   }
 

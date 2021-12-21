@@ -33,7 +33,7 @@ const IndexPage: VFC = () => {
           </a>
         )}
 
-        <Link href="/auth0/authed" prefetch={false}>
+        <Link href="/auth0/authed" passHref>
           <div className={styles.card}>
             <h2>Go My Page &rarr;</h2>
             {!user && <p>(Not Allowed)</p>}

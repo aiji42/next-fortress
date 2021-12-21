@@ -1,6 +1,6 @@
-import { Fallback, Middleware } from './types'
+import { Fallback } from './types'
 import { Netmask } from 'netmask'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextMiddleware } from 'next/server'
 import { handleFallback } from './handle-fallback'
 
 type IPs = string | Array<string>
@@ -8,7 +8,7 @@ type IPs = string | Array<string>
 export const makeIPInspector = (
   allowedIPs: IPs,
   fallback: Fallback
-): Middleware => {
+): NextMiddleware => {
   return (request, event) => {
     const ok = inspectIp(allowedIPs, request.ip)
     if (ok) return
