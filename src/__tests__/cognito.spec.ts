@@ -38,6 +38,12 @@ fetchMock.get(
   }
 )
 
+const cognitoParams = {
+  region: 'ap-northeast-1',
+  userPoolId: 'xxx',
+  userPoolWebClientId: 'yyy'
+}
+
 jest.mock('../handle-fallback', () => ({
   handleFallback: jest.fn()
 }))
@@ -52,11 +58,10 @@ describe('makeCognitoInspector', () => {
   })
 
   test('has no cookies', async () => {
-    await makeCognitoInspector(
-      fallback,
-      'ap-northeast-1',
-      'xxx'
-    )({ cookies: {} } as NextRequest, event)
+    await makeCognitoInspector(fallback, cognitoParams)(
+      { cookies: {} } as NextRequest,
+      event
+    )
 
     expect(handleFallback).toBeCalledWith(fallback, { cookies: {} }, event)
   })
@@ -68,14 +73,10 @@ describe('makeCognitoInspector', () => {
     ;(jwtVerify as jest.Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
-    await makeCognitoInspector(
-      fallback,
-      'ap-northeast-1',
-      'xxx'
-    )(
+    await makeCognitoInspector(fallback, cognitoParams)(
       {
         cookies: {
-          'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
+          'CognitoIdentityServiceProvider.yyy.userName.idToken': 'x.x.x'
         }
       } as unknown as NextRequest,
       event
@@ -99,13 +100,12 @@ describe('makeCognitoInspector', () => {
     )
     await makeCognitoInspector(
       fallback,
-      'ap-northeast-1',
-      'xxx',
+      cognitoParams,
       (res) => !!res.email_verified
     )(
       {
         cookies: {
-          'CognitoIdentityServiceProvider.xxx.idToken': 'x.x.x'
+          'CognitoIdentityServiceProvider.yyy.userName.idToken': 'x.x.x'
         }
       } as unknown as NextRequest,
       event
@@ -122,14 +122,10 @@ describe('makeCognitoInspector', () => {
       new Promise((resolve, reject) => reject(false))
     )
     const token = 'x.y.z'
-    await makeCognitoInspector(
-      fallback,
-      'ap-northeast-1',
-      'xxx'
-    )(
+    await makeCognitoInspector(fallback, cognitoParams)(
       {
         cookies: {
-          'CognitoIdentityServiceProvider.xxx.idToken': token
+          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
         }
       } as unknown as NextRequest,
       event
@@ -139,7 +135,7 @@ describe('makeCognitoInspector', () => {
       fallback,
       {
         cookies: {
-          'CognitoIdentityServiceProvider.xxx.idToken': token
+          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
         }
       },
       event
@@ -151,14 +147,10 @@ describe('makeCognitoInspector', () => {
       kid: 'kid3'
     })
     const token = 'x.y.z'
-    await makeCognitoInspector(
-      fallback,
-      'ap-northeast-1',
-      'xxx'
-    )(
+    await makeCognitoInspector(fallback, cognitoParams)(
       {
         cookies: {
-          'CognitoIdentityServiceProvider.xxx.idToken': token
+          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
         }
       } as unknown as NextRequest,
       event
@@ -168,7 +160,7 @@ describe('makeCognitoInspector', () => {
       fallback,
       {
         cookies: {
-          'CognitoIdentityServiceProvider.xxx.idToken': token
+          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
         }
       },
       event

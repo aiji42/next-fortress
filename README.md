@@ -50,9 +50,11 @@ type Middleware = (request: NextRequest, event?: NextFetchEvent) => Response | u
 import { makeIPInspector } from 'next-fortress'
 import { NextRequest } from 'next/server'
 
-// type IPs = string | Array<string>
-// type makeIPInspector = (allowedIPs: IPs, fallback: Fallback) => Middleware
-// IP can be specified in CIDR format. You can also specify multiple IPs in an array.
+/*
+  type IPs = string | Array<string>
+  type makeIPInspector = (allowedIPs: IPs, fallback: Fallback) => Middleware
+  // IP can be specified in CIDR format. You can also specify multiple IPs in an array.
+*/
 export const middleware = makeIPInspector('123.123.123.123/32', {
   type: 'redirect',
   destination: '/'
@@ -68,7 +70,12 @@ export const middleware = makeIPInspector('123.123.123.123/32', {
 // /pages/mypage/_middleware.ts
 import { makeFirebaseInspector } from 'next-fortress'
 
-// type makeFirebaseInspector = (fallback: Fallback, customHandler?: (payload: any) => boolean) => AsyncMiddleware;
+/*
+  type makeFirebaseInspector = (
+    fallback: Fallback,
+    customHandler?: (payload: any) => boolean
+  ) => AsyncMiddleware
+*/
 export const middleware = makeFirebaseInspector(
   { type: 'redirect', destination: '/signin' }
 )
@@ -119,12 +126,26 @@ export const middleware = makeFirebaseInspector(
 // /pages/mypage/_middleware.ts
 import { makeCognitoInspector } from 'next-fortress'
 
-// type makeCognitoInspector =
-//     (fallback: Fallback, cognitoRegion: string, cognitoUserPoolId: string, customHandler?: (payload: any) => boolean) => AsyncMiddleware;
+/*
+  type UserPoolParams = {
+    region: string;
+    userPoolId: string;
+    userPoolWebClientId: string;
+  }
+
+  type makeCognitoInspector = (
+    fallback: Fallback,
+    params: UserPoolParams,
+    customHandler?: (payload: any) => boolean
+  ) => AsyncMiddleware
+*/
 export const middleware = makeCognitoInspector(
   { type: 'redirect', destination: '/signin' },
-  process.env.COGNITO_REGION,
-  process.env.COGNITO_USER_POOL_ID
+  {
+    region: process.env.COGNITO_REGION,
+    userPoolId: process.env.COGNITO_USER_POOL_ID,
+    userPoolWebClientId: process.env.COGNITO_USER_POOL_WEB_CLIENT_ID,
+  }
 )
 ```
 
@@ -140,7 +161,7 @@ Amplify.configure({
 })
 ```
 
-For the 4th argument of `makeCognitoInspector`, you can pass a payload inspection function. This is useful, for example, if you want to ignore some authentication providers, or if you need to ensure that the email has been verified.  
+For the 3rd argument of `makeCognitoInspector`, you can pass a payload inspection function. This is useful, for example, if you want to ignore some authentication providers, or if you need to ensure that the email has been verified.  
 If this function returns false, it will enter the fallback case.
 ```ts
 // /pages/mypage/_middleware.ts
@@ -149,8 +170,11 @@ import { makeCognitoInspector } from 'next-fortress'
 // Fallback if the email address is not verified.
 export const middleware = makeCognitoInspector(
   { type: 'redirect', destination: '/signin' },
-  process.env.COGNITO_REGION,
-  process.env.COGNITO_USER_POOL_ID,
+  {
+    region: process.env.COGNITO_REGION,
+    userPoolId: process.env.COGNITO_USER_POOL_ID,
+    userPoolWebClientId: process.env.COGNITO_USER_POOL_WEB_CLIENT_ID,
+  },
   (payload) => payload.email_verified
 )
 ```
@@ -163,7 +187,13 @@ export const middleware = makeCognitoInspector(
 // /pages/mypage/_middleware.ts
 import { makeAuth0Inspector } from 'next-fortress'
 
-// type makeAuth0Inspector = (fallback: Fallback, apiEndpoint: string, customHandler?: (payload: any) => boolean) => AsyncMiddleware;
+/*
+  type makeAuth0Inspector = (
+    fallback: Fallback,
+    apiEndpoint: string,
+    customHandler?: (payload: any) => boolean
+  ) => AsyncMiddleware;
+*/
 export const middleware = makeAuth0Inspector(
   { type: 'redirect', destination: '/singin' },
   '/api/auth/me' // api endpoint for auth0 profile

@@ -3,18 +3,22 @@ import { NextRequest, NextMiddleware } from 'next/server'
 import { handleFallback } from './handle-fallback'
 import { decodeProtectedHeader, importJWK, JWK, jwtVerify } from 'jose'
 
+type UserPoolParams = {
+  region: string
+  userPoolId: string
+  userPoolWebClientId: string
+}
+
 export const makeCognitoInspector = (
   fallback: Fallback,
-  cognitoRegion: string,
-  cognitoUserPoolId: string,
+  params: UserPoolParams,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customHandler?: (payload: any) => boolean
 ): NextMiddleware => {
   return async (request, event) => {
     const ok = await verifyCognitoAuthenticatedUser(
       request,
-      cognitoRegion,
-      cognitoUserPoolId,
+      params,
       customHandler
     )
     if (ok) return
@@ -24,13 +28,14 @@ export const makeCognitoInspector = (
 
 const verifyCognitoAuthenticatedUser = async (
   req: NextRequest,
-  region: string,
-  poolId: string,
+  { region, userPoolId: poolId, userPoolWebClientId: clientId }: UserPoolParams,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customHandler?: (payload: any) => boolean
 ): Promise<boolean> => {
   const token = Object.entries(req.cookies).find(([key]) =>
-    /CognitoIdentityServiceProvider\..+\.idToken/.test(key)
+    new RegExp(
+      `CognitoIdentityServiceProvider\\.${clientId}\\..+\\.idToken`
+    ).test(key)
   )?.[1]
   if (!token) return false
 
