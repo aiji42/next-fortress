@@ -48,7 +48,6 @@ type Middleware = (request: NextRequest, event?: NextFetchEvent) => Response | u
 ```ts
 // /pages/admin/_middleware.ts
 import { makeIPInspector } from 'next-fortress'
-import { NextRequest } from 'next/server'
 
 /*
   type IPs = string | Array<string>
