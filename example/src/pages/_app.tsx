@@ -26,7 +26,7 @@ Amplify.configure({
     process.env.NEXT_PUBLIC_COGNITO_USER_POOL_WEB_CLIENT_ID,
   oauth: {
     domain: process.env.NEXT_PUBLIC_COGNITO_DOMAIN,
-    scope: ['openid', 'profile', 'email'],
+    scope: ['openid', 'phone', 'email'],
     redirectSignIn:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
         ? 'https://next-fortress.vercel.app/cognito'
