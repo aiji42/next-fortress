@@ -5,7 +5,14 @@ jest.mock('next/server', () => ({
   NextResponse: jest.fn()
 }))
 
-const dummyRequest = { nextUrl: { pathname: '/' } } as NextRequest
+const dummyRequest = {
+  nextUrl: {
+    pathname: '/',
+    clone: () => ({
+      pathname: '/'
+    })
+  }
+} as NextRequest
 const dummyEvent = {} as NextFetchEvent
 
 describe('handleFallback', () => {
@@ -38,14 +45,17 @@ describe('handleFallback', () => {
       dummyRequest,
       dummyEvent
     )
-    expect(NextResponse.redirect).toBeCalledWith('/foo/bar', undefined)
+    expect(NextResponse.redirect).toBeCalledWith(
+      { pathname: '/foo/bar' },
+      undefined
+    )
 
     handleFallback(
       { type: 'redirect', destination: '/foo/baz', statusCode: 301 },
       dummyRequest,
       dummyEvent
     )
-    expect(NextResponse.redirect).toBeCalledWith('/foo/baz', 301)
+    expect(NextResponse.redirect).toBeCalledWith({ pathname: '/foo/baz' }, 301)
   })
 
   test('prevent redirection loop', () => {
@@ -66,6 +76,6 @@ describe('handleFallback', () => {
       dummyRequest,
       dummyEvent
     )
-    expect(NextResponse.rewrite).toBeCalledWith('/foo/bar')
+    expect(NextResponse.rewrite).toBeCalledWith({ pathname: '/foo/bar' })
   })
 })
