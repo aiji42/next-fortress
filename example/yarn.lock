@@ -4883,7 +4883,7 @@ netmask@^2.0.2:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.0.2.tgz#8b01a07644065d536383835823bc52004ebac5e7"
   integrity sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==
 
-next-fortress@4.0.1-beta.0:
+next-fortress@4.0.1-beta.1:
   version "4.0.1-beta.1"
   resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-4.0.1-beta.1.tgz#750771e1ed3e787d385fdb5189198cfc01437aad"
   integrity sha512-eCjn87CJP6mBqo9trzOxaDwe7qdTwhcXcrLqUq2RIF/wWATo49Y7D6TiljYiSLjv1/Umu1C/gLldfw70onsvJg==
