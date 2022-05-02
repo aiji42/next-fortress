@@ -9,9 +9,15 @@ export const handleFallback = (
 ): ReturnType<NextMiddleware> => {
   if (typeof fallback === 'function') return fallback(request, event)
   if (request.preflight) return new NextResponse(null)
-  if (fallback.type === 'rewrite')
-    return NextResponse.rewrite(fallback.destination)
+  if (fallback.type === 'rewrite') {
+    const url = request.nextUrl.clone()
+    url.pathname = fallback.destination
+    return NextResponse.rewrite(url)
+  }
 
-  if (request.nextUrl.pathname !== fallback.destination)
-    return NextResponse.redirect(fallback.destination, fallback.statusCode)
+  if (request.nextUrl.pathname !== fallback.destination) {
+    const url = request.nextUrl.clone()
+    url.pathname = fallback.destination
+    return NextResponse.redirect(url, fallback.statusCode)
+  }
 }

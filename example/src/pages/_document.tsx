@@ -7,6 +7,7 @@ import Document, {
 } from 'next/document'
 import { CssBaseline } from '@geist-ui/react'
 
+// @ts-ignore
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)

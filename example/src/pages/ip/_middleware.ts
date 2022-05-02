@@ -6,7 +6,9 @@ export const middleware: NextMiddleware = (req, event) => {
   const ips = req.cookies['__allowed_ips']
   if (!ips) {
     if (req.preflight) return new NextResponse(null)
-    return NextResponse.redirect('/ip')
+    const url = req.nextUrl.clone()
+    url.pathname = '/ip'
+    return NextResponse.redirect(url)
   }
 
   return makeIPInspector(ips.split(','), {
