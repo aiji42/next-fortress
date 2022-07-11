@@ -1,11 +1,12 @@
+import { vi, describe, beforeEach, test, expect } from 'vitest'
 import { makeAuth0Inspector } from '../auth0'
 import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
 import { NextFetchEvent, NextRequest } from 'next/server'
 import fetchMock from 'fetch-mock'
 
-jest.mock('../handle-fallback', () => ({
-  handleFallback: jest.fn()
+vi.mock('../handle-fallback', () => ({
+  handleFallback: vi.fn()
 }))
 
 const event = {} as NextFetchEvent
@@ -38,7 +39,7 @@ const headers = {
 
 describe('makeAuth0Inspector', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   describe('dose not have nextUrl origin', () => {

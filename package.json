@@ -5,8 +5,19 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "*.d.ts"
   ],
   "repository": "git@github.com:aiji42/next-fortress.git",
   "author": "aiji42 <aiji42@gmail.com> (https://twitter.com/aiji42_dev)",
@@ -24,43 +35,40 @@
   },
   "homepage": "https://github.com/aiji42/next-fortress#readme",
   "scripts": {
-    "lint": "eslint ./src/**/*.ts ./src/*.ts",
-    "format": "prettier --write src/*.ts src/**/*.ts example/src/*",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "build": "tsc",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "build": "node build.js && npx tsc --declaration --emitDeclarationOnly --declarationDir './dist' && npx tsc --declaration --emitDeclarationOnly --declarationDir './'",
     "prepare": "husky install",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepack": "yarn build"
   },
   "peerDependencies": {
-    "next": ">=12.1.0"
+    "next": ">=12.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/preset-env": "^7.17.10",
-    "@babel/preset-typescript": "^7.16.7",
-    "@commitlint/cli": "^16.2.4",
-    "@commitlint/config-conventional": "^16.2.4",
-    "@types/jest": "^27.4.1",
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "@edge-runtime/vm": "^1.1.0-beta.11",
     "@types/netmask": "^1.0.30",
-    "@types/node": "^17.0.31",
-    "@typescript-eslint/eslint-plugin": "^5.21.0",
-    "@typescript-eslint/parser": "^5.21.0",
-    "babel-jest": "^28.0.3",
-    "eslint": "^8.14.0",
-    "eslint-config-prettier": "^8.5.0",
+    "@types/node": "^18.0.3",
+    "c8": "^7.11.3",
+    "esbuild": "^0.14.49",
     "fetch-mock": "^9.11.0",
-    "husky": "^7.0.4",
-    "jest": "^28.0.3",
-    "next": "^12.1.5",
-    "prettier": "^2.6.2",
-    "semantic-release": "^19.0.2",
-    "semantic-release-cli": "^5.4.4",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.4"
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "next": "^12.2.2",
+    "prettier": "^2.7.1",
+    "semantic-release": "^19.0.3",
+    "typescript": "^4.7.4",
+    "vitest": "^0.18.0"
   },
   "dependencies": {
-    "jose": "^4.8.0",
+    "jose": "^4.8.3",
     "netmask": "^2.0.2"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "prettier --write"
+    ]
   }
 }

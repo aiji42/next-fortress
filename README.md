@@ -46,8 +46,8 @@ type Middleware = (request: NextRequest, event?: NextFetchEvent) => Response | u
 [example](https://next-fortress.vercel.app/ip)
 
 ```ts
-// /pages/admin/_middleware.ts
-import { makeIPInspector } from 'next-fortress'
+// middleware.ts
+import { makeIPInspector } from 'next-fortress/ip'
 
 /*
   type IPs = string | Array<string>
@@ -58,6 +58,10 @@ export const middleware = makeIPInspector('123.123.123.123/32', {
   type: 'redirect',
   destination: '/'
 })
+
+export const config = {
+  matcher: ['/admin/:path*'],
+}
 ```
 
 ### Control by Firebase
@@ -66,8 +70,8 @@ export const middleware = makeIPInspector('123.123.123.123/32', {
 
 
 ```ts
-// /pages/mypage/_middleware.ts
-import { makeFirebaseInspector } from 'next-fortress'
+// middleware.ts
+import { makeFirebaseInspector } from 'next-fortress/firebase'
 
 /*
   type makeFirebaseInspector = (
@@ -78,12 +82,16 @@ import { makeFirebaseInspector } from 'next-fortress'
 export const middleware = makeFirebaseInspector(
   { type: 'redirect', destination: '/signin' }
 )
+
+export const config = {
+  matcher: ['/mypage/:path*'],
+}
 ```
 
 Put the Firebase user token into the cookie using the following example.  
 ```ts
 // cient side code (for example /pages/_app.tsx)
-import { FIREBASE_COOKIE_KEY } from 'next-fortress/dist/constants'
+import { FIREBASE_COOKIE_KEY } from 'next-fortress/constants'
 
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
@@ -103,14 +111,18 @@ firebase.auth().onAuthStateChanged(function (user) {
 For the second argument of `makeFirebaseInspector`, you can pass a payload inspection function. This is useful, for example, if you want to ignore some authentication providers, or if you need to ensure that the email has been verified.  
 If this function returns false, it will enter the fallback case.
 ```ts
-// /pages/mypage/_middleware.ts
-import { makeFirebaseInspector } from 'next-fortress'
+// middleware.ts
+import { makeFirebaseInspector } from 'next-fortress/firebase'
 
 // Redirect for anonymous users.
 export const middleware = makeFirebaseInspector(
   { type: 'redirect', destination: '/signin' },
   (payload) => payload.firebase.sign_in_provider !== 'anonymous'
 )
+
+export const config = {
+  matcher: ['/mypage/:path*'],
+}
 ```
 
 **NOTE**
@@ -122,8 +134,8 @@ export const middleware = makeFirebaseInspector(
 [example](https://next-fortress.vercel.app/cognito)
 
 ```ts
-// /pages/mypage/_middleware.ts
-import { makeCognitoInspector } from 'next-fortress'
+// middleware.ts
+import { makeCognitoInspector } from 'next-fortress/cognito'
 
 /*
   type UserPoolParams = {
@@ -146,6 +158,10 @@ export const middleware = makeCognitoInspector(
     userPoolWebClientId: process.env.COGNITO_USER_POOL_WEB_CLIENT_ID,
   }
 )
+
+export const config = {
+  matcher: ['/mypage/:path*'],
+}
 ```
 
 Add `ssr: true` option to `Amplify.configure` to handle the Cognito cookies on the edge.
@@ -163,8 +179,8 @@ Amplify.configure({
 For the 3rd argument of `makeCognitoInspector`, you can pass a payload inspection function. This is useful, for example, if you want to ignore some authentication providers, or if you need to ensure that the email has been verified.  
 If this function returns false, it will enter the fallback case.
 ```ts
-// /pages/mypage/_middleware.ts
-import { makeCognitoInspector } from 'next-fortress'
+// middleware.ts
+import { makeCognitoInspector } from 'next-fortress/cognito'
 
 // Fallback if the email address is not verified.
 export const middleware = makeCognitoInspector(
@@ -176,6 +192,10 @@ export const middleware = makeCognitoInspector(
   },
   (payload) => payload.email_verified
 )
+
+export const config = {
+  matcher: ['/mypage/:path*'],
+}
 ```
 
 ### Control by Auth0
@@ -183,8 +203,8 @@ export const middleware = makeCognitoInspector(
 [example](https://next-fortress.vercel.app/auth0)
 
 ```ts
-// /pages/mypage/_middleware.ts
-import { makeAuth0Inspector } from 'next-fortress'
+// middleware.ts
+import { makeAuth0Inspector } from 'next-fortress/auth0'
 
 /*
   type makeAuth0Inspector = (
@@ -197,6 +217,10 @@ export const middleware = makeAuth0Inspector(
   { type: 'redirect', destination: '/singin' },
   '/api/auth/me' // api endpoint for auth0 profile
 )
+
+export const config = {
+  matcher: ['/mypage/:path*'],
+}
 ```
 
 To use Auth0, the api root must have an endpoint. [@auth0/nextjs-auth0](https://github.com/auth0/nextjs-auth0#basic-setup)
@@ -210,8 +234,8 @@ export default handleAuth()
 For the third argument of `makeAuth0Inspector`, you can pass a payload inspection function. This is useful, for example, if you need to ensure that the email has been verified.  
 If this function returns false, it will enter the fallback case.
 ```ts
-// /pages/mypage/_middleware.ts
-import { makeAuth0Inspector } from 'next-fortress'
+// middleware.ts
+import { makeAuth0Inspector } from 'next-fortress/auth0'
 
 // Fallback if the email address is not verified.
 export const middleware = makeAuth0Inspector(
@@ -219,6 +243,10 @@ export const middleware = makeAuth0Inspector(
   '/api/auth/me',
   (payload) => payload.email_verified
 )
+
+export const config = {
+  matcher: ['/mypage/:path*'],
+}
 ```
 
 ## Contributing

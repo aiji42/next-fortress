@@ -1,10 +1,11 @@
+import { vi, describe, beforeEach, test, expect, it } from 'vitest'
 import { makeIPInspector } from '../ip'
 import { NextFetchEvent, NextRequest } from 'next/server'
 import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
 
-jest.mock('../handle-fallback', () => ({
-  handleFallback: jest.fn()
+vi.mock('../handle-fallback', () => ({
+  handleFallback: vi.fn()
 }))
 
 const event = {} as NextFetchEvent
@@ -13,7 +14,7 @@ const fallback: Fallback = { type: 'redirect', destination: '/foo' }
 
 describe('makeIPInspector', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   test('matched with allowedIp', () => {

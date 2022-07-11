@@ -1,3 +1,4 @@
+import { vi, describe, beforeEach, test, expect, Mock } from 'vitest'
 import { makeCognitoInspector } from '../cognito'
 import { NextFetchEvent, NextRequest } from 'next/server'
 import { handleFallback } from '../handle-fallback'
@@ -5,10 +6,10 @@ import { Fallback } from '../types'
 import { decodeProtectedHeader, jwtVerify } from 'jose'
 import fetchMock from 'fetch-mock'
 
-jest.mock('jose', () => ({
-  importJWK: jest.fn(),
-  decodeProtectedHeader: jest.fn(),
-  jwtVerify: jest.fn()
+vi.mock('jose', () => ({
+  importJWK: vi.fn(),
+  decodeProtectedHeader: vi.fn(),
+  jwtVerify: vi.fn()
 }))
 
 fetchMock.get(
@@ -44,8 +45,8 @@ const cognitoParams = {
   userPoolWebClientId: 'yyy'
 }
 
-jest.mock('../handle-fallback', () => ({
-  handleFallback: jest.fn()
+vi.mock('../handle-fallback', () => ({
+  handleFallback: vi.fn()
 }))
 
 const fallback: Fallback = { type: 'redirect', destination: '/foo' }
@@ -54,7 +55,7 @@ const event = {} as NextFetchEvent
 
 describe('makeCognitoInspector', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   test('has no cookies', async () => {
@@ -67,10 +68,10 @@ describe('makeCognitoInspector', () => {
   })
 
   test('has the firebase cookie', async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid1'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
     await makeCognitoInspector(fallback, cognitoParams)(
@@ -86,10 +87,10 @@ describe('makeCognitoInspector', () => {
   })
 
   test('has the firebase cookie and passed custom handler', async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid1'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) =>
         resolve({
           payload: {
@@ -115,10 +116,10 @@ describe('makeCognitoInspector', () => {
   })
 
   test("has the cognito cookie, but it's not valid.", async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid1'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve, reject) => reject(false))
     )
     const token = 'x.y.z'
@@ -143,7 +144,7 @@ describe('makeCognitoInspector', () => {
   })
 
   test('jwks expired.', async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid3'
     })
     const token = 'x.y.z'
