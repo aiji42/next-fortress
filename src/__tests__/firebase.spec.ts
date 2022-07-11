@@ -1,9 +1,13 @@
+/**
+ * @vitest-environment edge-runtime
+ */
 import { vi, describe, beforeEach, test, expect, Mock } from 'vitest'
 import { makeFirebaseInspector } from '../firebase'
-import { NextFetchEvent, NextRequest } from 'next/server'
+import type { NextFetchEvent } from 'next/server'
+const { NextRequest } = require('next/server')
 import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
-import fetchMock from 'fetch-mock'
+import * as fetchMock from 'fetch-mock'
 import { decodeProtectedHeader, jwtVerify, importX509 } from 'jose'
 
 vi.mock('jose', () => ({
@@ -51,9 +55,10 @@ describe('makeFirebaseInspector', () => {
   })
 
   test('has no cookies', async () => {
-    await makeFirebaseInspector(fallback)({ cookies: {} } as NextRequest, event)
+    const req = new NextRequest('https://example.com')
+    await makeFirebaseInspector(fallback)(req, event)
 
-    expect(handleFallback).toBeCalledWith(fallback, { cookies: {} }, event)
+    expect(handleFallback).toBeCalledWith(fallback, req, event)
   })
 
   test('has the firebase cookie', async () => {
@@ -63,14 +68,9 @@ describe('makeFirebaseInspector', () => {
     ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
-    await makeFirebaseInspector(fallback)(
-      {
-        cookies: {
-          __fortressFirebaseSession: 'x.x.x'
-        }
-      } as unknown as NextRequest,
-      event
-    )
+    const req = new NextRequest('https://example.com')
+    req.cookies.set('__fortressFirebaseSession', 'x.x.x')
+    await makeFirebaseInspector(fallback)(req, event)
 
     expect(handleFallback).not.toBeCalled()
   })
@@ -86,14 +86,9 @@ describe('makeFirebaseInspector', () => {
     ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
-    await makeFirebaseInspector(fallback)(
-      {
-        cookies: {
-          session: 'x.x.x'
-        }
-      } as unknown as NextRequest,
-      event
-    )
+    const req = new NextRequest('https://example.com')
+    req.cookies.set('session', 'x.x.x')
+    await makeFirebaseInspector(fallback)(req, event)
 
     expect(handleFallback).not.toBeCalled()
   })
@@ -113,17 +108,12 @@ describe('makeFirebaseInspector', () => {
         })
       )
     )
+    const req = new NextRequest('https://example.com')
+    req.cookies.set('__fortressFirebaseSession', 'x.x.x')
     await makeFirebaseInspector(
       fallback,
       (res) => res.firebase.sign_in_provider === 'google.com'
-    )(
-      {
-        cookies: {
-          __fortressFirebaseSession: 'x.x.x'
-        }
-      } as unknown as NextRequest,
-      event
-    )
+    )(req, event)
 
     expect(handleFallback).not.toBeCalled()
   })
@@ -136,24 +126,11 @@ describe('makeFirebaseInspector', () => {
       new Promise((resolve, reject) => reject(false))
     )
     const token = 'x.y.z'
-    await makeFirebaseInspector(fallback)(
-      {
-        cookies: {
-          __fortressFirebaseSession: token
-        }
-      } as unknown as NextRequest,
-      event
-    )
+    const req = new NextRequest('https://example.com')
+    req.cookies.set('__fortressFirebaseSession', token)
+    await makeFirebaseInspector(fallback)(req, event)
 
-    expect(handleFallback).toBeCalledWith(
-      fallback,
-      {
-        cookies: {
-          __fortressFirebaseSession: token
-        }
-      },
-      event
-    )
+    expect(handleFallback).toBeCalledWith(fallback, req, event)
   })
 
   test('jwks expired.', async () => {
@@ -161,24 +138,11 @@ describe('makeFirebaseInspector', () => {
       kid: 'kid3'
     })
     const token = 'x.y.z'
-    await makeFirebaseInspector(fallback)(
-      {
-        cookies: {
-          __fortressFirebaseSession: token
-        }
-      } as unknown as NextRequest,
-      event
-    )
+    const req = new NextRequest('https://example.com')
+    req.cookies.set('__fortressFirebaseSession', token)
+    await makeFirebaseInspector(fallback)(req, event)
 
-    expect(handleFallback).toBeCalledWith(
-      fallback,
-      {
-        cookies: {
-          __fortressFirebaseSession: token
-        }
-      },
-      event
-    )
+    expect(handleFallback).toBeCalledWith(fallback, req, event)
     expect(importX509).toBeCalledWith(undefined, 'RS256')
   })
 
@@ -194,14 +158,9 @@ describe('makeFirebaseInspector', () => {
       new Promise((resolve) => resolve(true))
     )
     const token = 'x.y.z'
-    await makeFirebaseInspector(fallback)(
-      {
-        cookies: {
-          __fortressFirebaseSession: token
-        }
-      } as unknown as NextRequest,
-      event
-    )
+    const req = new NextRequest('https://example.com')
+    req.cookies.set('__fortressFirebaseSession', token)
+    await makeFirebaseInspector(fallback)(req, event)
 
     expect(handleFallback).not.toBeCalled()
     expect(importX509).toBeCalledWith('zzzzzzzzzz', 'RS256')

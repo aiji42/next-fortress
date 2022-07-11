@@ -48,6 +48,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "@edge-runtime/vm": "^1.1.0-beta.11",
     "@types/netmask": "^1.0.30",
     "@types/node": "^18.0.3",
     "c8": "^7.11.3",
@@ -55,7 +56,7 @@
     "fetch-mock": "^9.11.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "next": "^12.1.5",
+    "next": "^12.2.2",
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.3",
     "typescript": "^4.7.4",

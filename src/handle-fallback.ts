@@ -8,7 +8,7 @@ export const handleFallback = (
   event: NextFetchEvent
 ): ReturnType<NextMiddleware> => {
   if (typeof fallback === 'function') return fallback(request, event)
-  if (request.preflight) return new NextResponse(null)
+  if (request.method === 'OPTIONS') return new NextResponse(null)
   if (fallback.type === 'rewrite') {
     const url = request.nextUrl.clone()
     url.pathname = fallback.destination

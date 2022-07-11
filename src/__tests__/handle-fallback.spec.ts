@@ -32,7 +32,7 @@ describe('handleFallback', () => {
     NextResponse.redirect = vi.fn()
     handleFallback(
       { type: 'redirect', destination: '/foo/bar' },
-      { ...dummyRequest, preflight: 1 } as unknown as NextRequest,
+      { ...dummyRequest, method: 'OPTIONS' } as unknown as NextRequest,
       dummyEvent
     )
     expect(NextResponse.redirect).not.toBeCalled()

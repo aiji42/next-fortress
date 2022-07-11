@@ -23,7 +23,7 @@ const verifyFirebaseIdToken = async (
 ): Promise<boolean> => {
   const cookieKey =
     process.env.FORTRESS_FIREBASE_COOKIE_KEY ?? FIREBASE_COOKIE_KEY
-  const token = req.cookies[cookieKey]
+  const token = req.cookies.get(cookieKey)
   if (!token) return false
 
   const endpoint =
