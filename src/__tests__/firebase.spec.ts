@@ -1,3 +1,4 @@
+import { vi, describe, beforeEach, test, expect, Mock } from 'vitest'
 import { makeFirebaseInspector } from '../firebase'
 import { NextFetchEvent, NextRequest } from 'next/server'
 import { handleFallback } from '../handle-fallback'
@@ -5,11 +6,11 @@ import { Fallback } from '../types'
 import fetchMock from 'fetch-mock'
 import { decodeProtectedHeader, jwtVerify, importX509 } from 'jose'
 
-jest.mock('jose', () => ({
-  importJWK: jest.fn(),
-  decodeProtectedHeader: jest.fn(),
-  jwtVerify: jest.fn(),
-  importX509: jest.fn()
+vi.mock('jose', () => ({
+  importJWK: vi.fn(),
+  decodeProtectedHeader: vi.fn(),
+  jwtVerify: vi.fn(),
+  importX509: vi.fn()
 }))
 
 fetchMock
@@ -33,8 +34,8 @@ fetchMock
     }
   )
 
-jest.mock('../handle-fallback', () => ({
-  handleFallback: jest.fn()
+vi.mock('../handle-fallback', () => ({
+  handleFallback: vi.fn()
 }))
 
 const event = {} as NextFetchEvent
@@ -45,7 +46,7 @@ const originalEnv = { ...process.env }
 
 describe('makeFirebaseInspector', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
     process.env = originalEnv
   })
 
@@ -56,10 +57,10 @@ describe('makeFirebaseInspector', () => {
   })
 
   test('has the firebase cookie', async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid1'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
     await makeFirebaseInspector(fallback)(
@@ -79,10 +80,10 @@ describe('makeFirebaseInspector', () => {
       ...process.env,
       FORTRESS_FIREBASE_COOKIE_KEY: 'session'
     }
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid1'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
     await makeFirebaseInspector(fallback)(
@@ -98,10 +99,10 @@ describe('makeFirebaseInspector', () => {
   })
 
   test('has the firebase cookie and passed custom handler', async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid1'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) =>
         resolve({
           payload: {
@@ -128,10 +129,10 @@ describe('makeFirebaseInspector', () => {
   })
 
   test("has the firebase cookie, but it's not valid.", async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid1'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve, reject) => reject(false))
     )
     const token = 'x.y.z'
@@ -156,7 +157,7 @@ describe('makeFirebaseInspector', () => {
   })
 
   test('jwks expired.', async () => {
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid3'
     })
     const token = 'x.y.z'
@@ -186,10 +187,10 @@ describe('makeFirebaseInspector', () => {
       ...process.env,
       FORTRESS_FIREBASE_MODE: 'session'
     }
-    ;(decodeProtectedHeader as jest.Mock).mockReturnValue({
+    ;(decodeProtectedHeader as Mock).mockReturnValue({
       kid: 'kid3'
     })
-    ;(jwtVerify as jest.Mock).mockReturnValue(
+    ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
     const token = 'x.y.z'

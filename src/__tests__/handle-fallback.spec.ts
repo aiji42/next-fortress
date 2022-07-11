@@ -1,8 +1,9 @@
+import { vi, describe, beforeEach, test, expect } from 'vitest'
 import { handleFallback } from '../handle-fallback'
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
-jest.mock('next/server', () => ({
-  NextResponse: jest.fn()
+vi.mock('next/server', () => ({
+  NextResponse: vi.fn()
 }))
 
 const dummyRequest = {
@@ -17,18 +18,18 @@ const dummyEvent = {} as NextFetchEvent
 
 describe('handleFallback', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   test('passed function', () => {
-    const fallback = jest.fn()
+    const fallback = vi.fn()
     handleFallback(fallback, dummyRequest, dummyEvent)
 
     expect(fallback).toBeCalledWith(dummyRequest, dummyEvent)
   })
 
   test('handle preflight', () => {
-    NextResponse.redirect = jest.fn()
+    NextResponse.redirect = vi.fn()
     handleFallback(
       { type: 'redirect', destination: '/foo/bar' },
       { ...dummyRequest, preflight: 1 } as unknown as NextRequest,
@@ -39,7 +40,7 @@ describe('handleFallback', () => {
   })
 
   test('passed redirect option', () => {
-    NextResponse.redirect = jest.fn()
+    NextResponse.redirect = vi.fn()
     handleFallback(
       { type: 'redirect', destination: '/foo/bar' },
       dummyRequest,
@@ -70,7 +71,7 @@ describe('handleFallback', () => {
   })
 
   test('passed rewrite option', () => {
-    NextResponse.rewrite = jest.fn()
+    NextResponse.rewrite = vi.fn()
     handleFallback(
       { type: 'rewrite', destination: '/foo/bar' },
       dummyRequest,
