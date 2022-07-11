@@ -47,7 +47,7 @@ type Middleware = (request: NextRequest, event?: NextFetchEvent) => Response | u
 
 ```ts
 // /pages/admin/_middleware.ts
-import { makeIPInspector } from 'next-fortress'
+import { makeIPInspector } from 'next-fortress/ip'
 
 /*
   type IPs = string | Array<string>
@@ -67,7 +67,7 @@ export const middleware = makeIPInspector('123.123.123.123/32', {
 
 ```ts
 // /pages/mypage/_middleware.ts
-import { makeFirebaseInspector } from 'next-fortress'
+import { makeFirebaseInspector } from 'next-fortress/firebase'
 
 /*
   type makeFirebaseInspector = (
@@ -83,7 +83,7 @@ export const middleware = makeFirebaseInspector(
 Put the Firebase user token into the cookie using the following example.  
 ```ts
 // cient side code (for example /pages/_app.tsx)
-import { FIREBASE_COOKIE_KEY } from 'next-fortress/dist/constants'
+import { FIREBASE_COOKIE_KEY } from 'next-fortress/constants'
 
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
@@ -104,7 +104,7 @@ For the second argument of `makeFirebaseInspector`, you can pass a payload inspe
 If this function returns false, it will enter the fallback case.
 ```ts
 // /pages/mypage/_middleware.ts
-import { makeFirebaseInspector } from 'next-fortress'
+import { makeFirebaseInspector } from 'next-fortress/firebase'
 
 // Redirect for anonymous users.
 export const middleware = makeFirebaseInspector(
@@ -123,7 +123,7 @@ export const middleware = makeFirebaseInspector(
 
 ```ts
 // /pages/mypage/_middleware.ts
-import { makeCognitoInspector } from 'next-fortress'
+import { makeCognitoInspector } from 'next-fortress/cognito'
 
 /*
   type UserPoolParams = {
@@ -164,7 +164,7 @@ For the 3rd argument of `makeCognitoInspector`, you can pass a payload inspectio
 If this function returns false, it will enter the fallback case.
 ```ts
 // /pages/mypage/_middleware.ts
-import { makeCognitoInspector } from 'next-fortress'
+import { makeCognitoInspector } from 'next-fortress/cognito'
 
 // Fallback if the email address is not verified.
 export const middleware = makeCognitoInspector(
@@ -184,7 +184,7 @@ export const middleware = makeCognitoInspector(
 
 ```ts
 // /pages/mypage/_middleware.ts
-import { makeAuth0Inspector } from 'next-fortress'
+import { makeAuth0Inspector } from 'next-fortress/auth0'
 
 /*
   type makeAuth0Inspector = (
@@ -211,7 +211,7 @@ For the third argument of `makeAuth0Inspector`, you can pass a payload inspectio
 If this function returns false, it will enter the fallback case.
 ```ts
 // /pages/mypage/_middleware.ts
-import { makeAuth0Inspector } from 'next-fortress'
+import { makeAuth0Inspector } from 'next-fortress/auth0'
 
 // Fallback if the email address is not verified.
 export const middleware = makeAuth0Inspector(

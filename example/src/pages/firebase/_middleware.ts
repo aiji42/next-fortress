@@ -1,4 +1,4 @@
-import { makeFirebaseInspector } from 'next-fortress'
+import { makeFirebaseInspector } from 'next-fortress/firebase'
 
 export const middleware = makeFirebaseInspector(
   {

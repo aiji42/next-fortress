@@ -5,8 +5,19 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "*.d.ts"
   ],
   "repository": "git@github.com:aiji42/next-fortress.git",
   "author": "aiji42 <aiji42@gmail.com> (https://twitter.com/aiji42_dev)",
@@ -26,7 +37,7 @@
   "scripts": {
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "build": "tsc",
+    "build": "node build.js && npx tsc --declaration --emitDeclarationOnly --declarationDir './dist' && npx tsc --declaration --emitDeclarationOnly --declarationDir './'",
     "prepare": "husky install",
     "semantic-release": "semantic-release"
   },
@@ -51,6 +62,7 @@
     "vitest": "^0.18.0"
   },
   "dependencies": {
+    "esbuild": "^0.14.49",
     "jose": "^4.8.3",
     "netmask": "^2.0.2"
   },

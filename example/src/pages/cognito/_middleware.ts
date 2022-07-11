@@ -1,4 +1,4 @@
-import { makeCognitoInspector } from 'next-fortress'
+import { makeCognitoInspector } from 'next-fortress/cognito'
 
 const region = process.env.NEXT_PUBLIC_COGNITO_REGION ?? ''
 const userPoolId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID ?? ''

@@ -1,4 +1,4 @@
-import { makeIPInspector } from 'next-fortress'
+import { makeIPInspector } from 'next-fortress/ip'
 import { NextMiddleware, NextResponse } from 'next/server'
 
 export const middleware: NextMiddleware = (req, event) => {
