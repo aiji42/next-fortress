@@ -39,10 +39,11 @@
     "test:coverage": "vitest run --coverage",
     "build": "node build.js && npx tsc --declaration --emitDeclarationOnly --declarationDir './dist' && npx tsc --declaration --emitDeclarationOnly --declarationDir './'",
     "prepare": "husky install",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepack": "yarn build"
   },
   "peerDependencies": {
-    "next": ">=12.1.0"
+    "next": ">=12.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
@@ -50,19 +51,17 @@
     "@types/netmask": "^1.0.30",
     "@types/node": "^18.0.3",
     "c8": "^7.11.3",
+    "esbuild": "^0.14.49",
     "fetch-mock": "^9.11.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "next": "^12.1.5",
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.3",
-    "semantic-release-cli": "^5.4.4",
-    "ts-node": "^10.8.2",
     "typescript": "^4.7.4",
     "vitest": "^0.18.0"
   },
   "dependencies": {
-    "esbuild": "^0.14.49",
     "jose": "^4.8.3",
     "netmask": "^2.0.2"
   },
