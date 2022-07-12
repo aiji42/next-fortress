@@ -1,6 +1,6 @@
 import { Fallback } from './types'
 import { FIREBASE_COOKIE_KEY } from './constants'
-import { NextRequest, NextMiddleware } from 'next/server'
+import { NextRequest, NextMiddleware, NextFetchEvent } from 'next/server'
 import { handleFallback } from './handle-fallback'
 import { decodeProtectedHeader, jwtVerify, importX509 } from 'jose'
 
@@ -10,7 +10,7 @@ export const makeFirebaseInspector = (
   customHandler?: (payload: any) => boolean
 ): NextMiddleware => {
   return async (request, event) => {
-    const ok = await verifyFirebaseIdToken(request, customHandler)
+    const ok = await verifyFirebaseIdToken(request, event, customHandler)
     if (ok) return
     return handleFallback(fallback, request, event)
   }
@@ -18,6 +18,7 @@ export const makeFirebaseInspector = (
 
 const verifyFirebaseIdToken = async (
   req: NextRequest,
+  event: NextFetchEvent,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customHandler?: (payload: any) => boolean
 ): Promise<boolean> => {
@@ -26,15 +27,23 @@ const verifyFirebaseIdToken = async (
   const token = req.cookies.get(cookieKey)
   if (!token) return false
 
-  const endpoint =
+  const endpoint = new URL(
     process.env.FORTRESS_FIREBASE_MODE === 'session'
       ? 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/publicKeys'
       : 'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com'
+  )
+  const cache = await caches.open('cache:firebase')
+  let jwkRes = await cache.match(endpoint)
+  if (!jwkRes) {
+    console.log('cache not hit')
+    jwkRes = await fetch(endpoint)
+    event.waitUntil(cache.put(endpoint, jwkRes.clone()))
+  } else {
+    console.log('cache hit')
+  }
 
   try {
-    const keys: Record<string, string> = await fetch(endpoint).then((res) =>
-      res.json()
-    )
+    const keys: Record<string, string> = await jwkRes.json()
     const { kid = '' } = decodeProtectedHeader(token)
 
     return jwtVerify(token, await importX509(keys[kid], 'RS256'))

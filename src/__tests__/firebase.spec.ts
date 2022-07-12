@@ -42,15 +42,16 @@ vi.mock('../handle-fallback', () => ({
   handleFallback: vi.fn()
 }))
 
-const event = {} as NextFetchEvent
+const event = { waitUntil: () => {} } as unknown as NextFetchEvent
 
 const fallback: Fallback = { type: 'redirect', destination: '/foo' }
 
 const originalEnv = { ...process.env }
 
 describe('makeFirebaseInspector', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.resetAllMocks()
+    await caches.delete('cache:firebase')
     process.env = originalEnv
   })
 

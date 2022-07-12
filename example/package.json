@@ -16,8 +16,8 @@
     "firebase": "^9.9.0",
     "firebase-admin": "^11.0.0",
     "js-cookie": "^3.0.1",
-    "next": "12.2.2",
-    "next-fortress": "5.0.0-beta.1",
+    "next": "v12.2.3-canary.1",
+    "next-fortress": "5.1.0-beta.1",
     "nookies": "^2.5.2",
     "react": "^18.2.0",
     "react-dom": "18.2.0"
