@@ -4940,9 +4940,13 @@ netmask@^2.0.2:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.0.2.tgz#8b01a07644065d536383835823bc52004ebac5e7"
   integrity sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==
 
-"next-fortress@link:..":
-  version "0.0.0"
-  uid ""
+next-fortress@5.1.0-beta.1:
+  version "5.1.0-beta.1"
+  resolved "https://registry.yarnpkg.com/next-fortress/-/next-fortress-5.1.0-beta.1.tgz#012074b63900651dde69a83ec61a7114c6710869"
+  integrity sha512-1ptCIcreYYGaxVpS1hXxit1oIpfqlwmrMLZU8XluhkPSz22dqfVKUs/mUTknQRM3Zie4OIunJtsoig9vv3jq5Q==
+  dependencies:
+    jose "^4.8.3"
+    netmask "^2.0.2"
 
 next@12.2.2:
   version "12.2.2"
