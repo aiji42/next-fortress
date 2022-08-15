@@ -5,6 +5,10 @@ import { handleFallback } from '../handle-fallback'
 import { Fallback } from '../types'
 import { decodeProtectedHeader, jwtVerify } from 'jose'
 import fetchMock from 'fetch-mock'
+import {
+  Cookies,
+  NextCookies
+} from 'next/dist/server/web/spec-extension/cookies'
 
 vi.mock('jose', () => ({
   importJWK: vi.fn(),
@@ -59,12 +63,13 @@ describe('makeCognitoInspector', () => {
   })
 
   test('has no cookies', async () => {
+    const cookies = new Cookies()
     await makeCognitoInspector(fallback, cognitoParams)(
-      { cookies: {} } as NextRequest,
+      { cookies } as NextRequest,
       event
     )
 
-    expect(handleFallback).toBeCalledWith(fallback, { cookies: {} }, event)
+    expect(handleFallback).toBeCalledWith(fallback, { cookies }, event)
   })
 
   test('has the firebase cookie', async () => {
@@ -74,11 +79,11 @@ describe('makeCognitoInspector', () => {
     ;(jwtVerify as Mock).mockReturnValue(
       new Promise((resolve) => resolve(true))
     )
+    const cookies = new Cookies()
+    cookies.set('CognitoIdentityServiceProvider.yyy.userName.idToken', 'x.x.x')
     await makeCognitoInspector(fallback, cognitoParams)(
       {
-        cookies: {
-          'CognitoIdentityServiceProvider.yyy.userName.idToken': 'x.x.x'
-        }
+        cookies
       } as unknown as NextRequest,
       event
     )
@@ -99,15 +104,15 @@ describe('makeCognitoInspector', () => {
         })
       )
     )
+    const cookies = new Cookies()
+    cookies.set('CognitoIdentityServiceProvider.yyy.userName.idToken', 'x.x.x')
     await makeCognitoInspector(
       fallback,
       cognitoParams,
       (res) => !!res.email_verified
     )(
       {
-        cookies: {
-          'CognitoIdentityServiceProvider.yyy.userName.idToken': 'x.x.x'
-        }
+        cookies
       } as unknown as NextRequest,
       event
     )
@@ -123,11 +128,11 @@ describe('makeCognitoInspector', () => {
       new Promise((resolve, reject) => reject(false))
     )
     const token = 'x.y.z'
+    const cookies = new Cookies()
+    cookies.set('CognitoIdentityServiceProvider.yyy.userName.idToken', token)
     await makeCognitoInspector(fallback, cognitoParams)(
       {
-        cookies: {
-          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
-        }
+        cookies
       } as unknown as NextRequest,
       event
     )
@@ -135,9 +140,7 @@ describe('makeCognitoInspector', () => {
     expect(handleFallback).toBeCalledWith(
       fallback,
       {
-        cookies: {
-          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
-        }
+        cookies
       },
       event
     )
@@ -148,11 +151,11 @@ describe('makeCognitoInspector', () => {
       kid: 'kid3'
     })
     const token = 'x.y.z'
+    const cookies = new Cookies()
+    cookies.set('CognitoIdentityServiceProvider.yyy.userName.idToken', token)
     await makeCognitoInspector(fallback, cognitoParams)(
       {
-        cookies: {
-          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
-        }
+        cookies
       } as unknown as NextRequest,
       event
     )
@@ -160,9 +163,7 @@ describe('makeCognitoInspector', () => {
     expect(handleFallback).toBeCalledWith(
       fallback,
       {
-        cookies: {
-          'CognitoIdentityServiceProvider.yyy.userName.idToken': token
-        }
+        cookies
       },
       event
     )
