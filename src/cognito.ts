@@ -32,13 +32,13 @@ const verifyCognitoAuthenticatedUser = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customHandler?: (payload: any) => boolean
 ): Promise<boolean> => {
-  const tokenKey = [...req.cookies.keys()].find((key) =>
+  const tokenKey = [...req.cookies.getAll()].find((key) =>
     new RegExp(
       `CognitoIdentityServiceProvider\\.${clientId}\\..+\\.idToken`
-    ).test(key)
+    ).test(key.name)
   )
   if (!tokenKey) return false
-  const token = req.cookies.get(tokenKey)
+  const token = tokenKey.value
 
   if (!token) return false
 
